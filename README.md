@@ -26,7 +26,7 @@ ganache-cli --fork https://mainnet.infura.io/v3/<YOUR-PROJECT-ID> --account "0x8
 truffle compile --all
 ```
 
-- Deploy smart contract
+- Deploy smart contract (run this before running others function to deploy smart contract into ganache)
 
 ```
 npm run deploy
