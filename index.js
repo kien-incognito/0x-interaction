@@ -69,6 +69,7 @@ function quote(options, cb) {
 	});
 }
 
+// triggers trigger0x function which use forwarder to run data.
 function trigger0x(forwarder, data, value, gasPrice, cb) {
 	if (cached.simpleToken !== undefined) {
 		let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
@@ -87,6 +88,7 @@ function trigger0x(forwarder, data, value, gasPrice, cb) {
 	}
 }
 
+// returns balance of given tokenAddresses.
 function balanceOf(tokenAddresses, cb) {
 	for (let i=0; i < tokenAddresses.length; i++) {
 		let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
@@ -109,6 +111,7 @@ function balanceOf(tokenAddresses, cb) {
 	}
 }
 
+// implement swapping eth to erc20 token
 function eth2Token(buyToken, buyTokenAddress, sellAmount) {
 	let options = {
 		sellToken: "ETH",
@@ -125,6 +128,7 @@ function eth2Token(buyToken, buyTokenAddress, sellAmount) {
 	});
 }
 
+// gets allowed selling amount.
 function allowance(tokenAddress, cb) {
 	let contracts = contractAddresses.getContractAddressesForChainOrThrow(1);
 	let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
@@ -133,6 +137,7 @@ function allowance(tokenAddress, cb) {
 	});
 }
 
+// implements swapping between 2 tokens
 function token2Token(sellToken, sellTokenAddress, buyToken, buyTokenAddress, sellAmount) {
 	let opts = {
 		sellToken: sellToken,
@@ -142,6 +147,7 @@ function token2Token(sellToken, sellTokenAddress, buyToken, buyTokenAddress, sel
 	exchange(opts, sellTokenAddress, buyTokenAddress);
 }
 
+// implements swapping token to eth
 function token2Eth(sellToken, sellTokenAddress, sellAmount) {
 	let opts = {
 		sellToken: sellToken,
@@ -151,6 +157,7 @@ function token2Eth(sellToken, sellTokenAddress, sellAmount) {
 	exchange(opts, sellTokenAddress, "");
 }
 
+// common function used for token2Eth and token2Token
 function exchange(opts, sellTokenAddress, buyTokenAddress) {
 	let contracts = contractAddresses.getContractAddressesForChainOrThrow(1);
 	let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
