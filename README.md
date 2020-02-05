@@ -50,7 +50,3 @@ npm run tokenToEth
 ```
 npm run tokenToToken
 ```
-
-# Known Issues
-
-- Eth's amount in smart contract is not updated after running tokenToEth.

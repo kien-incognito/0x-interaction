@@ -154,11 +154,24 @@ function token2Eth(sellToken, sellTokenAddress, sellAmount) {
 		buyToken: "ETH",
 		sellAmount: sellAmount
 	};
-	exchange(opts, sellTokenAddress, "");
+	exchange(opts, sellTokenAddress, process.env.WETH, function() {
+		// get balance of WETH and withdraw to ETH
+		let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
+		contract.methods.balanceOf(process.env.WETH).call().then(function(data) {
+			if (data > 0) {
+				// call withdraw
+				contract.methods.withdrawWrapETH(process.env.WETH, data).send({from: account.address}).then(function(res) {
+					web3.eth.getBalance(cached.simpleToken).then(function(rs) {
+						console.log(`ETH's balance of ${cached.simpleToken} is ${rs}`);
+					});
+				})
+			}
+		});
+	});
 }
 
 // common function used for token2Eth and token2Token
-function exchange(opts, sellTokenAddress, buyTokenAddress) {
+function exchange(opts, sellTokenAddress, buyTokenAddress, cb) {
 	let contracts = contractAddresses.getContractAddressesForChainOrThrow(1);
 	let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
 	let tokens = [sellTokenAddress, buyTokenAddress];
@@ -168,9 +181,9 @@ function exchange(opts, sellTokenAddress, buyTokenAddress) {
 				trigger0x(r.to, r.data, r.value, r.gasPrice, function() {
 					balanceOf(tokens, function() {
 						// check balance of account
-						web3.eth.getBalance(account.address).then(function(rs) {
-							console.log(`account's balance after process: ${rs}`);
-						})
+						if (cb !== undefined) {
+							cb();
+						}
 					});
 				})
 			})

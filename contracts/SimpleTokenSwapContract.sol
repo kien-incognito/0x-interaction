@@ -11,6 +11,10 @@ contract Token {
     function allowance(address tokenOwner, address spender) public view returns (uint);
 }
 
+contract WETH {
+    function withdraw(uint wad) public;
+}
+
 contract SimpleTokenSwapContract
 {
     using LibBytes for bytes;
@@ -40,5 +44,9 @@ contract SimpleTokenSwapContract
 
     function approve(address tokenAddress, address proxy, uint amount) public {
         Token(tokenAddress).approve(proxy, amount);
+    }
+
+    function withdrawWrapETH(address wETHAddress, uint amount) public {
+        WETH(wETHAddress).withdraw(amount);
     }
 }
