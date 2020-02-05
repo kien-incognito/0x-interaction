@@ -1,0 +1,38 @@
+{
+  "name": "0x-interaction",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "node index.js deploy",
+    "ethToToken": "node index.js ethToToken",
+    "tokenToEth": "node index.js tokenToEth",
+    "tokenToToken": "node index.js tokenToToken"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@0x/contract-addresses": "^4.3.0",
+    "@0x/contracts-asset-proxy": "^3.1.1",
+    "@0x/contracts-erc20": "^3.0.4",
+    "@0x/contracts-exchange": "^3.0.3",
+    "@0x/contracts-exchange-forwarder": "^4.0.3",
+    "@0x/contracts-exchange-libs": "^4.0.3",
+    "@0x/dev-utils": "^3.1.0",
+    "@0x/subproviders": "^6.0.3",
+    "@0x/utils": "^5.1.2",
+    "@0x/web3-wrapper": "^7.0.3",
+    "@truffle/config": "^1.2.13",
+    "@truffle/migrate": "^3.1.7",
+    "@truffle/resolver": "^5.1.0",
+    "dotenv": "^8.2.0",
+    "ethereumjs-tx": "^2.1.2",
+    "node-fetch": "^2.6.0",
+    "qs": "^6.9.1",
+    "web3": "^1.2.6"
+  }
+}
