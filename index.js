@@ -15,6 +15,14 @@ let contractAddresses = require("@0x/contract-addresses");
 dotenv.config();
 
 let account = web3.eth.accounts.privateKeyToAccount(process.env.PRIVATEKEY);
+const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+const INCOGNITO_MODE = "./IncognitoMode.sol";
+const INCOGNITO_PROXY = "./IncognitoProxy.sol";
+const KBN_TRADE = "./KBNTrade.sol";
+const ZRX_TRADE = "./ZRXTrade.sol";
+const EXECUTOR = "./Executor.sol";
+const ERC20 = "./ERC20.sol";
+const TRADE_FUNC = "trade";
 
 options = {
     working_dir: './',
@@ -31,11 +39,6 @@ options = {
     basePath: "./"
 };
 
-function toBN(n) {
-    let bn = new web3.utils.BN(n);
-    return bn
-}
-
 // 'options' is acting like args which are passed to cmd
 config = Config.detect(options, null);
 options.resolver = new Resolver(config);
@@ -43,189 +46,239 @@ options.resolver = new Resolver(config);
 
 // resolver is acting like artifacts in migrations
 let resolver = new ResolverIntercept(options.resolver);
-let SimpleToken = resolver.require("./SimpleTokenSwapContract.sol");
-SimpleToken.setProvider(options.provider());
+let IncognitoProxy = resolver.require(INCOGNITO_PROXY);
+let IncognitoMode = resolver.require(INCOGNITO_MODE);
+let KBNTrade = resolver.require(KBN_TRADE);
+let ZRXTrade = resolver.require(ZRX_TRADE);
+let Executor = resolver.require(EXECUTOR);
+let Erc20 = resolver.require(ERC20);
 
-function deploy() {
-	SimpleToken.new({from: account.address}).then(function(result) {
-    	console.log(`address=${result.address} txHash=${result.transactionHash}`);
-    	cached.simpleToken = result.address;
-    	// update cached
-    	console.log("rewrite cached.json");
-        fs.writeFile("cached.json", JSON.stringify(cached), "utf8", function() {
-            console.log("Saved cached.json");
-        });
-    }).catch(function(err) {
-    	console.log(err);
-    	return;
-    });	
+IncognitoProxy.setProvider(options.provider());
+IncognitoMode.setProvider(options.provider());
+KBNTrade.setProvider(options.provider());
+ZRXTrade.setProvider(options.provider());
+Executor.setProvider(options.provider());
+Erc20.setProvider(options.provider());
+
+async function deploy() {
+	// deploy smart contract
+	let rs = await Executor.new({from: account.address});
+	console.log(`Executor address=${rs.address} txHash=${rs.transactionHash}`);
+	cached.executor = rs.address;
+
+	rs = await IncognitoProxy.new(account.address, [], [], {from: account.address});
+	console.log(`IncognitoProxy address=${rs.address} txHash=${rs.transactionHash}`);
+	cached.incognitoProxy = rs.address;
+
+	rs = await IncognitoMode.new(account.address, cached.incognitoProxy, EMPTY_ADDRESS, cached.executor, {from: account.address});
+	console.log(`IncognitoMode address=${rs.address} txHash=${rs.transactionHash}`);
+	cached.incognitoMode = rs.address;
+
+	rs = await KBNTrade.new(process.env.KYBERNETWORK, cached.incognitoMode, {from: account.address});
+	console.log(`KBNTrade address=${rs.address} txHash=${rs.transactionHash}`);
+	cached.KBN = rs.address;
+
+	rs = await ZRXTrade.new(process.env.WETH, contractAddresses.getContractAddressesForChainOrThrow(1).erc20Proxy, cached.incognitoMode, {from: account.address});
+	console.log(`ZRXTrade address=${rs.address} txHash=${rs.transactionHash}`);
+	cached.ZRX = rs.address;
 }
 
-function quote(options, cb) {
-	fetch(`https://api.0x.org/swap/v0/quote?${qs.stringify(options)}`).then(function(res) {
-		res.json().then(function(data) {
-			cb(data);
-		})
-	});
+function IncognitoModeContract() {
+	return new web3.eth.Contract(IncognitoMode.abi, cached.incognitoMode);
 }
 
-// triggers trigger0x function which use forwarder to run data.
-function trigger0x(forwarder, data, value, gasPrice, cb) {
-	if (cached.simpleToken !== undefined) {
-		let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
-		contract.methods.trigger0x(Buffer.from(data.slice(2, data.length), "hex"), forwarder).send({
-			from: account.address,
-			value: value,
-			gasPrice: gasPrice,
-			gas: 2000000
-		}).on("transactionHash", function(hash) {
-			console.log(`triggering trigger0x function - hash=${hash}`);
-		}).then(function(result) {
-			cb();
-		}).catch(function(err) {
-			console.log(err);
-		})
-	}
+function ERC20Contract(token) {
+	return new web3.eth.Contract(Erc20.abi, token);
 }
 
-// returns balance of given tokenAddresses.
-function balanceOf(tokenAddresses, cb) {
-	for (let i=0; i < tokenAddresses.length; i++) {
-		let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
-		if (tokenAddresses[i] === "") {
-			// get eth balance
-			web3.eth.getBalance(cached.simpleToken).then(function(result) {
-				console.log(`balanceOf ${cached.simpleToken} in ETH is ${result}`);
-				if (cb !== undefined && i == tokenAddresses.length - 1) {
-					cb();
-				}
-			})
-		} else {
-			contract.methods.balanceOf(tokenAddresses[i]).call().then(function(data) {
-				console.log(`balanceOf ${cached.simpleToken} in ${tokenAddresses[i]} is ${data}`);
-				if (cb !== undefined && i == tokenAddresses.length - 1) {
-					cb();
-				}
-			});
+function ExecutorContract() {
+	return new web3.eth.Contract(Executor.abi, cached.executor);
+}
+
+function findTradeFunctionAbi(abi) {
+	for (let i=0; abi.length; i++) {
+		if (abi[i].name === TRADE_FUNC) {
+			return abi[i];
 		}
 	}
 }
 
-// implement swapping eth to erc20 token
-function eth2Token(buyToken, buyTokenAddress, sellAmount) {
+async function setAmount(token, amount) {
+	return await IncognitoModeContract().methods.setAmount(token, amount).send({from: account.address});
+}
+
+async function deposit(amount) {
+	return await IncognitoModeContract().methods.deposit(EMPTY_ADDRESS).send({from: account.address, value: amount});
+}
+
+async function quote(options) {
+	let rs = await fetch(`https://api.0x.org/swap/v0/quote?${qs.stringify(options)}`);
+	return await rs.json();
+}
+
+async function trade(_type, srcTokenName, srcToken, srcQty, destTokenName, destToken, incognitoAddress) {
+	let encodedData = "";
+	let exchangeAddress = "";
 	let options = {
-		sellToken: "ETH",
-		buyToken: buyToken,
-		sellAmount: sellAmount
-	}
-	balanceOf([buyTokenAddress], function() {
-		quote(options, function(res) {
-			console.log(`returned quote = ${JSON.stringify(res)}`);
-			trigger0x(res.to, res.data, res.value, res.gasPrice, function() {
-				balanceOf([buyTokenAddress], undefined);
-			});
-		});
-	});
-}
-
-// gets allowed selling amount.
-function allowance(tokenAddress, cb) {
-	let contracts = contractAddresses.getContractAddressesForChainOrThrow(1);
-	let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
-	contract.methods.allowance("0x6b175474e89094c44da98b954eedeac495271d0f", contracts.erc20Proxy).call().then(function(res) {
-		cb(res);
-	});
-}
-
-// implements swapping between 2 tokens
-function token2Token(sellToken, sellTokenAddress, buyToken, buyTokenAddress, sellAmount) {
-	let opts = {
-		sellToken: sellToken,
-		buyToken: buyToken,
-		sellAmount: sellAmount
-	}
-	exchange(opts, sellTokenAddress, buyTokenAddress);
-}
-
-// implements swapping token to eth
-function token2Eth(sellToken, sellTokenAddress, sellAmount) {
-	let opts = {
-		sellToken: sellToken,
-		buyToken: "ETH",
-		sellAmount: sellAmount
-	};
-	exchange(opts, sellTokenAddress, process.env.WETH, function() {
-		// get balance of WETH and withdraw to ETH
-		let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
-		contract.methods.balanceOf(process.env.WETH).call().then(function(data) {
-			if (data > 0) {
-				// call withdraw
-				contract.methods.withdrawWrapETH(process.env.WETH, data).send({from: account.address}).then(function(res) {
-					web3.eth.getBalance(cached.simpleToken).then(function(rs) {
-						console.log(`ETH's balance of ${cached.simpleToken} is ${rs}`);
-					});
-				})
-			}
-		});
-	});
-}
-
-// common function used for token2Eth and token2Token
-function exchange(opts, sellTokenAddress, buyTokenAddress, cb) {
-	let contracts = contractAddresses.getContractAddressesForChainOrThrow(1);
-	let contract = new web3.eth.Contract(SimpleToken.abi, cached.simpleToken);
-	let tokens = [sellTokenAddress, buyTokenAddress];
-	let triggerFunc = function() {
-		balanceOf(tokens, function() {
-			quote(opts, function(r) {
-				trigger0x(r.to, r.data, r.value, r.gasPrice, function() {
-					balanceOf(tokens, function() {
-						// check balance of account
-						if (cb !== undefined) {
-							cb();
-						}
-					});
-				})
-			})
-		})
+		from: account.address,
+		gas: 1000000
 	}
 
-	// check allowance
-	allowance(sellTokenAddress, function(amount) {
-		console.log(`allowance amount is ${amount}`);
-		if (amount < opts.sellAmount) {
-			console.log(`approving ${opts.sellAmount}`);
-			contract.methods.approve(sellTokenAddress, contracts.erc20Proxy, new BigNumber(opts.sellAmount)).send({
-				from: account.address,
-				gas: 2000000
-			})
-			.on("transachtionHash", function(hash) {
-				console.log(`approve's hash: ${hash}`);
-			})
-			.then(function(res) {
-				console.log(res);
-				triggerFunc();
-			});
-		} else {
-			triggerFunc();
-		}
-	});
+	if (destToken === EMPTY_ADDRESS) {
+		console.log(`eth balance of incognitoMode before trading is ${await web3.eth.getBalance(cached.incognitoMode)}`);
+	} else {
+		console.log(`balance of token ${destTokenName} before trading of incognitoMode is ${await balanceOf(destToken)}`);
+	}
+
+	if (_type === "0x") {
+		let rs = await trade0x(srcTokenName, srcToken, srcQty, destTokenName, destToken);
+		encodedData = rs[0];
+		options.gasPrice = rs[1];
+		options.value = rs[2];
+		exchangeAddress = cached.ZRX;
+	} else {
+		encodedData = await tradeKBN(srcToken, srcQty, destToken);
+		exchangeAddress = cached.KBN;
+	}
+
+	console.log(`encodedData=${encodedData} address=${exchangeAddress}`);
+	let rs = await IncognitoModeContract().methods.trade(incognitoAddress, srcToken, srcQty, destToken, exchangeAddress, Buffer.from(encodedData.slice(2, encodedData.length), "hex")).send(options);
+
+	if (destToken === EMPTY_ADDRESS) {
+		console.log(`eth balance of incognitoMode after trading is ${await web3.eth.getBalance(cached.incognitoMode)}`);
+	} else {
+		console.log(`balance of token ${destTokenName} after trading of incognitoMode is ${await balanceOf(destToken)}`);
+	}
+	return rs;
+}
+
+async function balanceOf(token) {
+	return await ERC20Contract(token).methods.balanceOf(cached.incognitoMode).call();
+}
+
+async function trade0x(srcTokenName, srcToken, srcQty, destTokenName, destToken) {
+	let options = {
+		sellToken: srcTokenName,
+		buyToken: destTokenName,
+		sellAmount: srcQty
+	}
+	let quoteData = await quote(options);
+
+	// find abi of trade function and encode it.
+	let abi = findTradeFunctionAbi(ZRXTrade.abi);
+	let params = [srcToken, srcQty, destToken, Buffer.from(quoteData.data.slice(2, quoteData.data.length), "hex"), quoteData.to];
+	return [web3.eth.abi.encodeFunctionCall(abi, params), quoteData.gasPrice, quoteData.protocolFee];
+}
+
+async function tradeKBN(srcToken, srcQty, destToken) {
+	let abi = findTradeFunctionAbi(KBNTrade.abi);
+	let params = [srcToken, new BigNumber(srcQty), destToken];
+	return web3.eth.abi.encodeFunctionCall(abi, params);
 }
 
 const command = process.argv[2];
+let amount = 0;
 switch (command) {
 	case "deploy":
-		deploy(); break;
-	case "ethToToken":
-		eth2Token("DAI", "0x6b175474e89094c44da98b954eedeac495271d0f", 10000000000000); break;
-	case "tokenToEth":
-		token2Eth("DAI", "0x6b175474e89094c44da98b954eedeac495271d0f", 100000000000000); break;
-	case "tokenToToken":
-		token2Token("DAI", "0x6b175474e89094c44da98b954eedeac495271d0f", "ZRX", "0xe41d2489571d322189246dafa5ebde1f4699f498", 1000000000000000); break;
+		deploy().then(function() {
+			console.log("rewrite cached.json");
+	        fs.writeFile("cached.json", JSON.stringify(cached), "utf8", function() {
+	            console.log("Saved cached.json");
+	        });
+		}).catch(function(e) {
+			console.log(e);
+		}); 
+		break;
+	case "setAmount":
+		let token = process.argv[3];
+		amount = process.argv[4];
+
+		setAmount(token, amount).then(function(rs) {
+			console.log(`amount=${amount} has been set for token=${token} at tx=${rs.transactionHash}`);
+		}); break;
+	case "deposit":
+		amount = process.argv[3];
+		deposit(amount).then(function(rs) {
+			let func = async function() {
+				let ethBalance = await web3.eth.getBalance(cached.incognitoMode);
+				console.log(`finish depositting amount=${amount} wei into incognitoMode smc at tx=${rs.transactionHash} currentBalance=${ethBalance} wei`);
+			};
+			func();
+		}); break;
+	case "trade":
+		let tradeType = process.argv[3]
+		let srcTokenName = process.argv[4];
+		let srcToken = process.argv[5];
+		let srcQty = process.argv[6];
+		let destTokenName = process.argv[7];
+		let destToken = process.argv[8];
+		let incognitoAddress = process.argv[9];
+
+		trade(tradeType, srcTokenName, srcToken, srcQty, destTokenName, destToken, incognitoAddress).then(function(res) {
+			console.log(res);
+			console.log(`finish trading type=${tradeType==="0x" ? tradeType : "KyberNetwork"} fromToken=${srcTokenName} sellAmount=${srcQty} toToken=${destTokenName} incognitoAddress=${incognitoAddress} tx=${res.transactionHash}`);
+		}); break;
 	default:
-		web3.eth.getBalance(account.address).then(function(rs) {
-			console.log(rs);
+		let mode = process.argv[3]; // 0x or KBN
+		let DAI_ADDRESS = "0x6b175474e89094c44da98b954eedeac495271d0f";
+		let KNC_ADDRESS = "0xdd974d5c2e2928dea5f71b9825b8b646686bd200";
+		let flow = async function() {
+			// deploy
+			await deploy();
+
+			console.log("\n\n================== TRADE 1 ETH TO DAI ==================\n\n");
+
+			// setAmount 10 ETH for later use
+			let rs = await setAmount(EMPTY_ADDRESS, "10000000000000000000");
+			console.log(`setAmount = ${10000000000000000000} for ETH with tx=${rs.transactionHash}`);
+
+			// deposit 1 ETH
+			rs = await deposit("1000000000000000000");
+			console.log(`deposit ${1000000000000000000} to IncognitoModeContract tx=${rs.transactionHash}`);
+
+			// make a trade 1 ETH to DAI
+			rs = await trade(mode, "ETH", "0x0000000000000000000000000000000000000000", "1000000000000000000", "DAI", DAI_ADDRESS, "myIncognitoAddress");
+			console.log(`trade ETH to DAI amount=${1000000000000000000} tx=${rs.transactionHash}`);
+
+			// print all events returned by above rs.
+			for (let k in rs.events) {
+				console.log(rs.events[k].returnValues);
+			}
+			
+			console.log("\n\n================== TRADE 100 DAI TO ETH ==================\n\n");
+
+			// setAmount 1 DAI
+			rs = await setAmount(DAI_ADDRESS, "100000000000000000000");
+			console.log(`setAmount = ${100000000000000000000} for DAI with tx=${rs.transactionHash}`);
+
+			// make a trade 100 DAI to ETH
+			rs = await trade(mode, "DAI", DAI_ADDRESS, "1000000000000000000", "ETH", EMPTY_ADDRESS, "myIncognitoAddress");
+			console.log(`trade DAI to ETH amount=${1000000000000000000} tx=${rs.transactionHash}`);
+
+			// print all events returned by above rs.
+			for (let k in rs.events) {
+				console.log(rs.events[k].returnValues);
+			}
+
+			console.log("\n\n================== TRADE 100 DAI TO KNC ==================\n\n");
+
+			// setAmount 1 DAI
+			rs = await setAmount(DAI_ADDRESS, "100000000000000000000");
+			console.log(`setAmount = ${100000000000000000000} for DAI with tx=${rs.transactionHash}`);
+
+			// make a trade 100 DAI to ETH
+			rs = await trade(mode, "DAI", DAI_ADDRESS, "1000000000000000000", "KNC", KNC_ADDRESS, "myIncognitoAddress");
+			console.log(`trade DAI to KNC amount=${1000000000000000000} tx=${rs.transactionHash}`);
+
+			// print all events returned by above rs.
+			for (let k in rs.events) {
+				console.log(rs.events[k].returnValues);
+			}
+
+		}
+		flow().then(function() {
+			console.log("finish");
+		}).catch(function(e) {
+			console.log(e);
 		});
 }
-
-

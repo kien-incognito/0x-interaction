@@ -9,9 +9,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "node index.js deploy",
-    "ethToToken": "node index.js ethToToken",
-    "tokenToEth": "node index.js tokenToEth",
-    "tokenToToken": "node index.js tokenToToken"
+    "setAmount": "node index.js setAmount",
+    "deposit": "node index.js deposit",
+    "trade": "node index.js trade",
+    "all": "node index.js"
   },
   "author": "",
   "license": "ISC",

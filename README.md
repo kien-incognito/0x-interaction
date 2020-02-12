@@ -32,21 +32,27 @@ truffle compile --all
 npm run deploy
 ```
 
-- Run Eth to Token demo (note: run this before do others swapping functions)
+- Deposit ETH into Incognito Smart Contract
 
 
 ```
-npm run ethToToken
+npm run deposit 1000000000000000000 // deposit 1 ETH
 ```
 
-- Run token to eth demo
+- Set withdraw request amount
 
 ```
-npm run tokenToEth
+npm run setAmount 0xdd974d5c2e2928dea5f71b9825b8b646686bd200 1000000000000000000 // set withdraw 1 KNC request 
 ```
 
-- Run token to token demo
+- Trade
 
 ```
-npm run tokenToToken
+npm run trade 0x ETH 0x0000000000000000000000000000000000000000 1000000000000000000 DAI 0x6b175474e89094c44da98b954eedeac495271d0f myIncognitoAddress // trade 1 ETH to DAI
+```
+
+- Run predefined flow (all steps above)
+
+```
+npm run all 0x // run all steps above with 0x mode
 ```
