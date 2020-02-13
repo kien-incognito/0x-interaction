@@ -66,15 +66,11 @@ Erc20.setProvider(options.provider());
 
 async function deploy() {
 	// deploy smart contract
-	let rs = await Executor.new({from: account.address});
-	console.log(`Executor address=${rs.address} txHash=${rs.transactionHash}`);
-	cached.executor = rs.address;
-
-	rs = await IncognitoProxy.new(account.address, [], [], {from: account.address});
+	let rs = await IncognitoProxy.new(account.address, [], [], {from: account.address});
 	console.log(`IncognitoProxy address=${rs.address} txHash=${rs.transactionHash}`);
 	cached.incognitoProxy = rs.address;
 
-	rs = await IncognitoMode.new(account.address, cached.incognitoProxy, EMPTY_ADDRESS, cached.executor, {from: account.address});
+	rs = await IncognitoMode.new(account.address, cached.incognitoProxy, EMPTY_ADDRESS, {from: account.address});
 	console.log(`IncognitoMode address=${rs.address} txHash=${rs.transactionHash}`);
 	cached.incognitoMode = rs.address;
 
