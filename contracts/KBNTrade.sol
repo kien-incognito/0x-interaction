@@ -47,15 +47,15 @@ contract KBNTrade is TradeUtils {
             // approve
             approve(srcToken, address(kyberNetworkProxyContract), srcQty);
             if (destToken != ETH_CONTRACT_ADDRESS) { // token to token.
-                amount = tokenToToken(srcToken, srcQty, destToken);
+                require(tokenToToken(srcToken, srcQty, destToken) > 0);
             } else {
-                amount = tokenToEth(srcToken, srcQty);
+                require(tokenToEth(srcToken, srcQty) > 0);
             }
         } else {
-            amount = ethToToken(destToken, srcQty);
+            require(ethToToken(destToken, srcQty) > 0);
         }
-        require(amount > 0);
         // transfer back to incognito smart contract
+        amount = balanceOf(destToken);
         transfer(destToken, amount);
         return amount;
     }

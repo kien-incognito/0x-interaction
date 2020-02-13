@@ -16,6 +16,10 @@ dotenv.config();
 
 let account = web3.eth.accounts.privateKeyToAccount(process.env.PRIVATEKEY);
 const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+const DAI_ADDRESS = "0x6b175474e89094c44da98b954eedeac495271d0f";
+const KNC_ADDRESS = "0xdd974d5c2e2928dea5f71b9825b8b646686bd200";
+const SAI_ADDRESS = "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359";
+const ABT_ADDRESS = "0xb98d4c97425d9908e66e53a6fdf673acca0be986";
 const INCOGNITO_MODE = "./IncognitoMode.sol";
 const INCOGNITO_PROXY = "./IncognitoProxy.sol";
 const KBN_TRADE = "./KBNTrade.sol";
@@ -219,9 +223,8 @@ switch (command) {
 			console.log(`finish trading type=${tradeType==="0x" ? tradeType : "KyberNetwork"} fromToken=${srcTokenName} sellAmount=${srcQty} toToken=${destTokenName} incognitoAddress=${incognitoAddress} tx=${res.transactionHash}`);
 		}); break;
 	default:
-		let mode = process.argv[3]; // 0x or KBN
-		let DAI_ADDRESS = "0x6b175474e89094c44da98b954eedeac495271d0f";
-		let KNC_ADDRESS = "0xdd974d5c2e2928dea5f71b9825b8b646686bd200";
+		let mode = process.argv[2]; // 0x or KBN
+		console.log(`running all with mode=${mode}`);
 		let flow = async function() {
 			// deploy
 			await deploy();
@@ -247,11 +250,11 @@ switch (command) {
 			
 			console.log("\n\n================== TRADE 100 DAI TO ETH ==================\n\n");
 
-			// setAmount 1 DAI
+			// setAmount 10 DAI
 			rs = await setAmount(DAI_ADDRESS, "100000000000000000000");
 			console.log(`setAmount = ${100000000000000000000} for DAI with tx=${rs.transactionHash}`);
 
-			// trade 100 DAI to ETH
+			// trade 10 DAI to ETH
 			rs = await trade(mode, "DAI", DAI_ADDRESS, "1000000000000000000", "ETH", EMPTY_ADDRESS, "myIncognitoAddress");
 			console.log(`trade DAI to ETH amount=${1000000000000000000} tx=${rs.transactionHash}`);
 
@@ -260,15 +263,15 @@ switch (command) {
 				console.log(rs.events[k].returnValues);
 			}
 
-			console.log("\n\n================== TRADE 100 DAI TO KNC ==================\n\n");
+			console.log("\n\n================== TRADE 10 DAI TO KNC ==================\n\n");
 
-			// setAmount 1 DAI
-			rs = await setAmount(DAI_ADDRESS, "100000000000000000000");
-			console.log(`setAmount = ${100000000000000000000} for DAI with tx=${rs.transactionHash}`);
+			// setAmount 10 DAI
+			rs = await setAmount(DAI_ADDRESS, "10000000000000000000");
+			console.log(`setAmount = ${10000000000000000000} for DAI with tx=${rs.transactionHash}`);
 
-			// trade 100 DAI to KNC
-			rs = await trade(mode, "DAI", DAI_ADDRESS, "1000000000000000000", "KNC", KNC_ADDRESS, "myIncognitoAddress");
-			console.log(`trade DAI to KNC amount=${1000000000000000000} tx=${rs.transactionHash}`);
+			// trade 10 DAI to KNC
+			rs = await trade(mode, "DAI", DAI_ADDRESS, "10000000000000000000", "ABT", ABT_ADDRESS, "myIncognitoAddress");
+			console.log(`trade DAI to KNC amount=${10000000000000000000} tx=${rs.transactionHash}`);
 
 			// print all events returned by above rs.
 			for (let k in rs.events) {

@@ -3,7 +3,6 @@ pragma experimental ABIEncoderV2;
 
 import "./IERC20.sol";
 import "./pause.sol";
-import "./Executor.sol";
 
 /**
  * @dev Interface of the contract capable of checking if an instruction is
@@ -40,7 +39,6 @@ contract Withdrawable {
 contract IncognitoMode is AdminPausable {
     address constant public ETH_TOKEN = 0x0000000000000000000000000000000000000000;
     mapping(bytes32 => bool) public withdrawed;
-    address executor;
     
     // withdrawRequests store pending withdrawn requests which specify how many token amount that an address can withdraw.
     mapping(address => mapping(address => uint)) public withdrawRequests;
@@ -62,15 +60,13 @@ contract IncognitoMode is AdminPausable {
      * @param admin: authorized address to Pause and migrate contract
      * @param incognitoProxyAddress: contract containing Incognito's committees
      * @param _prevVault: previous version of the Vault to refer back if necessary
-     * @param _executor: is an address of smart contract which execute other smart contracts from method and its params.
      * After migrating all assets to a new Vault, we still need to refer
      * back to previous Vault to make sure old withdrawals aren't being reused
      */
-    constructor(address admin, address incognitoProxyAddress, address _prevVault, address _executor) public AdminPausable(admin) {
+    constructor(address admin, address incognitoProxyAddress, address _prevVault) public AdminPausable(admin) {
         incognito = Incognito(incognitoProxyAddress);
         prevVault = Withdrawable(_prevVault);
         newVault = address(0);
-        executor = _executor;
     }
 
     /**
