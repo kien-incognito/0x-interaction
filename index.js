@@ -236,7 +236,7 @@ switch (command) {
 			rs = await deposit("1000000000000000000");
 			console.log(`deposit ${1000000000000000000} to IncognitoModeContract tx=${rs.transactionHash}`);
 
-			// make a trade 1 ETH to DAI
+			// trade 1 ETH to DAI
 			rs = await trade(mode, "ETH", "0x0000000000000000000000000000000000000000", "1000000000000000000", "DAI", DAI_ADDRESS, "myIncognitoAddress");
 			console.log(`trade ETH to DAI amount=${1000000000000000000} tx=${rs.transactionHash}`);
 
@@ -251,7 +251,7 @@ switch (command) {
 			rs = await setAmount(DAI_ADDRESS, "100000000000000000000");
 			console.log(`setAmount = ${100000000000000000000} for DAI with tx=${rs.transactionHash}`);
 
-			// make a trade 100 DAI to ETH
+			// trade 100 DAI to ETH
 			rs = await trade(mode, "DAI", DAI_ADDRESS, "1000000000000000000", "ETH", EMPTY_ADDRESS, "myIncognitoAddress");
 			console.log(`trade DAI to ETH amount=${1000000000000000000} tx=${rs.transactionHash}`);
 
@@ -266,7 +266,7 @@ switch (command) {
 			rs = await setAmount(DAI_ADDRESS, "100000000000000000000");
 			console.log(`setAmount = ${100000000000000000000} for DAI with tx=${rs.transactionHash}`);
 
-			// make a trade 100 DAI to ETH
+			// trade 100 DAI to KNC
 			rs = await trade(mode, "DAI", DAI_ADDRESS, "1000000000000000000", "KNC", KNC_ADDRESS, "myIncognitoAddress");
 			console.log(`trade DAI to KNC amount=${1000000000000000000} tx=${rs.transactionHash}`);
 

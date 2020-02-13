@@ -12,7 +12,7 @@
 npm i
 ```
 
-- Start ganache-cli which fork main net: register/create an account and a project in infura.io and replace <YOUR-PROJECT-ID> with the projectID
+- Start ganache-cli which forks and stimulates main net on your local, register an account then create a project in infura.io and replace <YOUR-PROJECT-ID> with the projectID
 
 ```
 ganache-cli --fork https://mainnet.infura.io/v3/<YOUR-PROJECT-ID> --account "0x81c85096bc78372f258c804adff8cc0f16f477cc707c366dda02f4a50dd4fe3e,100000000000000000000" --debug
