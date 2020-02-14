@@ -227,13 +227,14 @@ switch (command) {
 
 			console.log("\n\n================== TRADE 1 ETH TO DAI ==================\n\n");
 
-			// setAmount 10 ETH for later use
+			// setAmount 1 ETH
 			let rs = await setAmount(EMPTY_ADDRESS, "10000000000000000000");
 			console.log(`setAmount = ${10000000000000000000} for ETH with tx=${rs.transactionHash}`);
 
-			// deposit 1 ETH
-			rs = await deposit("1000000000000000000");
-			console.log(`deposit ${1000000000000000000} to IncognitoModeContract tx=${rs.transactionHash}`);
+			// deposit 10 ETH for later user
+			rs = await deposit("10000000000000000000");
+			console.log(`deposit ${10000000000000000000} to IncognitoModeContract tx=${rs.transactionHash}`);
+			console.log(`balance of IncognitoMode=${await web3.eth.getBalance(cached.incognitoMode)}`);
 
 			// trade 1 ETH to DAI
 			rs = await trade(mode, "ETH", "0x0000000000000000000000000000000000000000", "1000000000000000000", "DAI", DAI_ADDRESS, "myIncognitoAddress");
@@ -265,15 +266,19 @@ switch (command) {
 			rs = await setAmount(DAI_ADDRESS, "10000000000000000000");
 			console.log(`setAmount = ${10000000000000000000} for DAI with tx=${rs.transactionHash}`);
 
-			// trade 10 DAI to KNC
-			rs = await trade(mode, "DAI", DAI_ADDRESS, "10000000000000000000", "ABT", ABT_ADDRESS, "myIncognitoAddress");
-			console.log(`trade DAI to KNC amount=${10000000000000000000} tx=${rs.transactionHash}`);
+			// trade 10 DAI to KNC or ABT - KBN works mostly with ABT while 0x does not support this token.
+			if (mode === "0x") {
+				rs = await trade(mode, "DAI", DAI_ADDRESS, "10000000000000000000", "KNC", KNC_ADDRESS, "myIncognitoAddress");
+				console.log(`trade DAI to KNC amount=${10000000000000000000} tx=${rs.transactionHash}`);
+			} else {
+				rs = await trade(mode, "DAI", DAI_ADDRESS, "10000000000000000000", "ABT", ABT_ADDRESS, "myIncognitoAddress");
+				console.log(`trade DAI to ABT amount=${10000000000000000000} tx=${rs.transactionHash}`);
+			}
 
 			// print all events returned by above rs.
 			for (let k in rs.events) {
 				console.log(rs.events[k].returnValues);
 			}
-
 		}
 		flow().then(function() {
 			console.log("finish");

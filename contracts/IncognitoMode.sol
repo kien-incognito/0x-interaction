@@ -344,49 +344,57 @@ contract IncognitoMode is AdminPausable {
         emit WithdrawRequest(token, incognitoAddress, amount);
     }
 
-    event Log(address exchangeAddress, address sender, address token, uint withdrawRequestAmount, uint sellAmount, address buyToken, uint ethBalance, uint spentAmount, bool success, uint result);
-    event Log1(address token, bool qualified, bool transferResult, uint ethAmount, uint currentBalance);
-
     /**
      * @dev trade is used when users want to trade their tokens to other tokens.
      * @param incognitoAddress: incognito's address that will receive minted p-tokens.
-     * @param sellToken: token address that is sold.
-     * @param sellAmount: token's amount that will be sold. sellAmount must be less than total pending withdraw amount.
-     * @param buyToken: received token address.
+     * @param token: token address that is sold.
+     * @param amount: token's amount that will be sold. sellAmount must be less than total pending withdraw amount.
+     * @param recipientToken: received token address.
      * @param exchangeAddress: exchange address that execute trade process.
      * @param callData: encoded with signature and params of trade function.
      */
     function trade(
         string memory incognitoAddress, 
-        address sellToken, 
-        uint sellAmount,
-        address buyToken,
+        address token, 
+        uint amount,
+        address recipientToken,
         address exchangeAddress,
         bytes memory callData
     ) public payable {
-        require(withdrawRequests[msg.sender][sellToken] >= sellAmount);
-        require(sellToken != buyToken);
+        require(withdrawRequests[msg.sender][token] >= amount);
+        require(token != recipientToken);
         
+        // get balance of recipient token before trade to compare after trade.
+        uint balanceBeforeTrade = balanceOf(recipientToken);
+        if (recipientToken == ETH_TOKEN) {
+            balanceBeforeTrade -= msg.value;
+        }
+
         // define number of eth spent for forwarder.
         uint ethAmount = msg.value;
-        if (sellToken == ETH_TOKEN) {
-            ethAmount += sellAmount;
+        if (token == ETH_TOKEN) {
+            ethAmount += amount;
         } else {
             // transfer token to exchangeAddress.
-            require(ERC20(sellToken).balanceOf(address(this)) >= sellAmount);
-            bool result = ERC20(sellToken).transfer(exchangeAddress, sellAmount);
-            emit Log1(sellToken, ERC20(sellToken).balanceOf(address(this)) >= sellAmount, result, ethAmount, address(this).balance);
+            require(ERC20(token).balanceOf(address(this)) >= amount);
+            require(ERC20(token).transfer(exchangeAddress, amount));
         }
 
         require(address(this).balance >= ethAmount);
         (bool success, bytes memory result) = exchangeAddress.call.value(ethAmount)(callData);
-        // require(success);
-        uint amount = abi.decode(result, (uint));
-        emit Log(exchangeAddress, msg.sender, sellToken, withdrawRequests[msg.sender][sellToken], sellAmount, buyToken, address(this).balance, ethAmount, success, amount);
+
+        require(success);
+        (address returnedAddress, uint returnedAmount) = abi.decode(result, (address, uint));
+
+        require(returnedAddress == recipientToken);
+        uint balanceAfterTrade = balanceOf(recipientToken);
+
+        uint expectedAmount = balanceAfterTrade - balanceBeforeTrade;
+        require(expectedAmount == returnedAmount);
 
         // update withdrawRequests
-        withdrawRequests[msg.sender][sellToken] -= sellAmount;
-        emit Trade(incognitoAddress, buyToken, amount);
+        withdrawRequests[msg.sender][token] -= amount;
+        emit Trade(incognitoAddress, recipientToken, amount);
     }
 
     /**
@@ -519,5 +527,12 @@ contract IncognitoMode is AdminPausable {
             }
         }
         return uint8(returnValue);
+    }
+
+    function balanceOf(address token) public returns (uint) {
+        if (token == ETH_TOKEN) {
+            return address(this).balance;
+        }        
+        return ERC20(token).balanceOf(address(this));
     }
 }

@@ -27,7 +27,7 @@ contract ZRXTrade is TradeUtils
         wETH = _wETH;
     }
 
-    function trade(ERC20 srcToken, uint amount, ERC20 destToken, bytes memory callDataHex, address _forwarder) public payable isIncognitoSmartContract returns (uint sentAmount) {
+    function trade(ERC20 srcToken, uint amount, ERC20 destToken, bytes memory callDataHex, address _forwarder) public payable isIncognitoSmartContract returns (address, uint) {
         // do approve if srcToken is not ETH
         approve(srcToken, zeroProxy, amount);
 
@@ -36,6 +36,7 @@ contract ZRXTrade is TradeUtils
         (bool success, ) = address(forwarder).call.value(msg.value)(callDataHex);
         require(success);
 
+        uint sentAmount;
         // if destToken is ETH_CONTRACT_ADDRESS then unwrap WETH back to ETH
         if (destToken == ETH_CONTRACT_ADDRESS) {
             sentAmount = getBalance(ETH_CONTRACT_ADDRESS);
@@ -45,7 +46,7 @@ contract ZRXTrade is TradeUtils
             sentAmount = getBalance(destToken);
             transfer(destToken, sentAmount);
         }
-        return sentAmount;
+        return (address(destToken), sentAmount);
     }
 
     function getBalance(ERC20 token) internal view returns (uint) {

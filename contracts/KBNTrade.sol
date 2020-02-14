@@ -39,7 +39,7 @@ contract KBNTrade is TradeUtils {
         return kyberNetworkProxyContract.getExpectedRate(srcToken, destToken, srcQty);
     }
 
-    function trade(ERC20 srcToken, uint srcQty, ERC20 destToken) public payable isIncognitoSmartContract returns (uint) {
+    function trade(ERC20 srcToken, uint srcQty, ERC20 destToken) public payable isIncognitoSmartContract returns (address, uint) {
         require(balanceOf(srcToken) >= srcQty);
         require(srcToken != destToken);
         uint amount = 0;
@@ -57,7 +57,7 @@ contract KBNTrade is TradeUtils {
         // transfer back to incognito smart contract
         amount = balanceOf(destToken);
         transfer(destToken, amount);
-        return amount;
+        return (address(destToken), amount);
     }
     
     function ethToToken(ERC20 token, uint srcQty) internal returns (uint) {
