@@ -39,10 +39,10 @@ contract Withdrawable {
 contract IncognitoMode is AdminPausable {
     address constant public ETH_TOKEN = 0x0000000000000000000000000000000000000000;
     mapping(bytes32 => bool) public withdrawed;
-    
+
     // withdrawRequests store pending withdrawn requests which specify how many token amount that an address can withdraw.
     mapping(address => mapping(address => uint)) public withdrawRequests;
-    
+
     Incognito public incognito;
     Withdrawable public prevVault;
     address payable public newVault;
@@ -270,9 +270,9 @@ contract IncognitoMode is AdminPausable {
         }
         emit Withdraw(token, to, burned);
     }
-    
+
     /**
-     * @dev Burnt Proof is submited to store burnt amount of p-token/p-ETH and receiver's address 
+     * @dev Burnt Proof is submited to store burnt amount of p-token/p-ETH and receiver's address
      * Receiver then can call withdrawRequest to withdraw these token to he/she incognito address.
      * @notice This function takes a burn instruction on Incognito Chain, checks
      * for its validity and returns the token back to ETH chain
@@ -327,10 +327,10 @@ contract IncognitoMode is AdminPausable {
             sigRs,
             sigSs
         );
-        
+
         withdrawRequests[to][token] += burned;
     }
-    
+
     /**
      * @dev User requests withdraw token contains in withdrawRequests.
      * WithdrawRequest event will be emitted to let incognito recognize and mint new p-tokens for the user.
@@ -341,21 +341,19 @@ contract IncognitoMode is AdminPausable {
     function requestWithdraw(address token, string memory incognitoAddress, uint256 amount) public {
         require(withdrawRequests[msg.sender][token] >= amount);
         withdrawRequests[msg.sender][token] -= amount;
-        emit WithdrawRequest(token, incognitoAddress, amount);
+        emit Deposit(token, incognitoAddress, amount);
     }
 
     /**
-     * @dev trade is used when users want to trade their tokens to other tokens.
-     * @param incognitoAddress: incognito's address that will receive minted p-tokens.
+     * @dev execute is used when users want to trade their tokens to other tokens.
      * @param token: token address that is sold.
      * @param amount: token's amount that will be sold. sellAmount must be less than total pending withdraw amount.
      * @param recipientToken: received token address.
      * @param exchangeAddress: exchange address that execute trade process.
      * @param callData: encoded with signature and params of trade function.
      */
-    function trade(
-        string memory incognitoAddress, 
-        address token, 
+    function execute(
+        address token,
         uint amount,
         address recipientToken,
         address exchangeAddress,
@@ -363,7 +361,7 @@ contract IncognitoMode is AdminPausable {
     ) public payable {
         require(withdrawRequests[msg.sender][token] >= amount);
         require(token != recipientToken);
-        
+
         // get balance of recipient token before trade to compare after trade.
         uint balanceBeforeTrade = balanceOf(recipientToken);
         if (recipientToken == ETH_TOKEN) {
@@ -384,9 +382,9 @@ contract IncognitoMode is AdminPausable {
         (bool success, bytes memory result) = exchangeAddress.call.value(ethAmount)(callData);
 
         require(success);
-        (address returnedAddress, uint returnedAmount) = abi.decode(result, (address, uint));
+        (address returnedTokenAddress, uint returnedAmount) = abi.decode(result, (address, uint));
 
-        require(returnedAddress == recipientToken);
+        require(returnedTokenAddress == recipientToken);
         uint balanceAfterTrade = balanceOf(recipientToken);
 
         uint expectedAmount = balanceAfterTrade - balanceBeforeTrade;
@@ -394,15 +392,15 @@ contract IncognitoMode is AdminPausable {
 
         // update withdrawRequests
         withdrawRequests[msg.sender][token] -= amount;
-        emit Trade(incognitoAddress, recipientToken, amount);
+        withdrawRequests[msg.sender][recipientToken] += amount;
     }
 
     /**
      * NOTE: This function is used for testing purpose only, remove/comment this function after used.
      */
-    function setAmount(address sellToken, uint amount) public {
-        withdrawRequests[msg.sender][sellToken] = amount;
-    }
+    // function setAmount(address sellToken, uint amount) public {
+    //     withdrawRequests[msg.sender][sellToken] = amount;
+    // }
 
     /**
      * @dev Saves the address of the new Vault to migrate assets to
@@ -532,7 +530,7 @@ contract IncognitoMode is AdminPausable {
     function balanceOf(address token) public returns (uint) {
         if (token == ETH_TOKEN) {
             return address(this).balance;
-        }        
+        }
         return ERC20(token).balanceOf(address(this));
     }
 }
