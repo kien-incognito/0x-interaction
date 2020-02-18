@@ -1,0 +1,424 @@
+{
+  "contractName": "IAssets",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "assetData",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawAsset",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "assetData",
+          "type": "bytes"
+        }
+      ],
+      "name": "approveMakerAssetProxy",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"assetData\",\"type\":\"bytes\"}],\"name\":\"approveMakerAssetProxy\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"assetData\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"withdrawAsset\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"approveMakerAssetProxy(bytes)\":{\"details\":\"Approves the respective proxy for a given asset to transfer tokens on the Forwarder contract's behalf.      This is necessary because an order fee denominated in the maker asset (i.e. a percentage fee) is sent by the      Forwarder contract to the fee recipient.      This method needs to be called before forwarding orders of a maker asset that hasn't      previously been approved.\",\"params\":{\"assetData\":\"Byte array encoded for the respective asset proxy.\"}},\"withdrawAsset(bytes,uint256)\":{\"details\":\"Withdraws assets from this contract. The contract requires a ZRX balance in order to      function optimally, and this function allows the ZRX to be withdrawn by owner. It may also be      used to withdraw assets that were accidentally sent to this contract.\",\"params\":{\"amount\":\"Amount of ERC20 token to withdraw.\",\"assetData\":\"Byte array encoded for the respective asset proxy.\"}}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"@0x/contracts-exchange-forwarder/contracts/src/interfaces/IAssets.sol\":\"IAssets\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"@0x/contracts-exchange-forwarder/contracts/src/interfaces/IAssets.sol\":{\"keccak256\":\"0x91e8771035869c8e40e2f1a35df3c1bcc89cf3db69bf68ee73cd1f41c64ca79b\",\"urls\":[\"bzz-raw://8c1d159406b475af003a70998dbf2c30c0d5825332d5857c4908e7faf302c6ce\",\"dweb:/ipfs/QmZvgBB1JenURXRkAtRwJRaU6fNP7BdrHxac2wrBrLVbhz\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "/*\n\n  Copyright 2019 ZeroEx Intl.\n\n  Licensed under the Apache License, Version 2.0 (the \"License\");\n  you may not use this file except in compliance with the License.\n  You may obtain a copy of the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\n  Unless required by applicable law or agreed to in writing, software\n  distributed under the License is distributed on an \"AS IS\" BASIS,\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n  See the License for the specific language governing permissions and\n  limitations under the License.\n\n*/\n\npragma solidity ^0.5.9;\n\n\ncontract IAssets {\n\n    /// @dev Withdraws assets from this contract. The contract requires a ZRX balance in order to\n    ///      function optimally, and this function allows the ZRX to be withdrawn by owner. It may also be\n    ///      used to withdraw assets that were accidentally sent to this contract.\n    /// @param assetData Byte array encoded for the respective asset proxy.\n    /// @param amount Amount of ERC20 token to withdraw.\n    function withdrawAsset(\n        bytes calldata assetData,\n        uint256 amount\n    )\n        external;\n\n        /// @dev Approves the respective proxy for a given asset to transfer tokens on the Forwarder contract's behalf.\n        ///      This is necessary because an order fee denominated in the maker asset (i.e. a percentage fee) is sent by the\n        ///      Forwarder contract to the fee recipient.\n        ///      This method needs to be called before forwarding orders of a maker asset that hasn't\n        ///      previously been approved.\n        /// @param assetData Byte array encoded for the respective asset proxy.\n    function approveMakerAssetProxy(\n        bytes calldata assetData\n    )\n        external;\n}\n",
+  "sourcePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IAssets.sol",
+  "ast": {
+    "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IAssets.sol",
+    "exportedSymbols": {
+      "IAssets": [
+        3276
+      ]
+    },
+    "id": 3277,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3263,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "580:23:8"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 3276,
+        "linearizedBaseContracts": [
+          3276
+        ],
+        "name": "IAssets",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@dev Withdraws assets from this contract. The contract requires a ZRX balance in order to\n      function optimally, and this function allows the ZRX to be withdrawn by owner. It may also be\n      used to withdraw assets that were accidentally sent to this contract.\n @param assetData Byte array encoded for the respective asset proxy.\n @param amount Amount of ERC20 token to withdraw.",
+            "id": 3270,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "withdrawAsset",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3268,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3265,
+                  "name": "assetData",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3270,
+                  "src": "1083:24:8",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3264,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1083:5:8",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3267,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3270,
+                  "src": "1117:14:8",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3266,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1117:7:8",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1073:64:8"
+            },
+            "returnParameters": {
+              "id": 3269,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1154:0:8"
+            },
+            "scope": 3276,
+            "src": "1051:104:8",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@dev Approves the respective proxy for a given asset to transfer tokens on the Forwarder contract's behalf.\n      This is necessary because an order fee denominated in the maker asset (i.e. a percentage fee) is sent by the\n      Forwarder contract to the fee recipient.\n      This method needs to be called before forwarding orders of a maker asset that hasn't\n      previously been approved.\n @param assetData Byte array encoded for the respective asset proxy.",
+            "id": 3275,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "approveMakerAssetProxy",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3273,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3272,
+                  "name": "assetData",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3275,
+                  "src": "1731:24:8",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3271,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1731:5:8",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1721:40:8"
+            },
+            "returnParameters": {
+              "id": 3274,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1778:0:8"
+            },
+            "scope": 3276,
+            "src": "1690:89:8",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3277,
+        "src": "606:1175:8"
+      }
+    ],
+    "src": "580:1202:8"
+  },
+  "legacyAST": {
+    "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IAssets.sol",
+    "exportedSymbols": {
+      "IAssets": [
+        3276
+      ]
+    },
+    "id": 3277,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3263,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".9"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "580:23:8"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 3276,
+        "linearizedBaseContracts": [
+          3276
+        ],
+        "name": "IAssets",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@dev Withdraws assets from this contract. The contract requires a ZRX balance in order to\n      function optimally, and this function allows the ZRX to be withdrawn by owner. It may also be\n      used to withdraw assets that were accidentally sent to this contract.\n @param assetData Byte array encoded for the respective asset proxy.\n @param amount Amount of ERC20 token to withdraw.",
+            "id": 3270,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "withdrawAsset",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3268,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3265,
+                  "name": "assetData",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3270,
+                  "src": "1083:24:8",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3264,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1083:5:8",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3267,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3270,
+                  "src": "1117:14:8",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3266,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1117:7:8",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1073:64:8"
+            },
+            "returnParameters": {
+              "id": 3269,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1154:0:8"
+            },
+            "scope": 3276,
+            "src": "1051:104:8",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@dev Approves the respective proxy for a given asset to transfer tokens on the Forwarder contract's behalf.\n      This is necessary because an order fee denominated in the maker asset (i.e. a percentage fee) is sent by the\n      Forwarder contract to the fee recipient.\n      This method needs to be called before forwarding orders of a maker asset that hasn't\n      previously been approved.\n @param assetData Byte array encoded for the respective asset proxy.",
+            "id": 3275,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "approveMakerAssetProxy",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3273,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3272,
+                  "name": "assetData",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3275,
+                  "src": "1731:24:8",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3271,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1731:5:8",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1721:40:8"
+            },
+            "returnParameters": {
+              "id": 3274,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1778:0:8"
+            },
+            "scope": 3276,
+            "src": "1690:89:8",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3277,
+        "src": "606:1175:8"
+      }
+    ],
+    "src": "580:1202:8"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.23",
+  "updatedAt": "2020-02-18T09:23:42.223Z",
+  "devdoc": {
+    "methods": {
+      "approveMakerAssetProxy(bytes)": {
+        "details": "Approves the respective proxy for a given asset to transfer tokens on the Forwarder contract's behalf.      This is necessary because an order fee denominated in the maker asset (i.e. a percentage fee) is sent by the      Forwarder contract to the fee recipient.      This method needs to be called before forwarding orders of a maker asset that hasn't      previously been approved.",
+        "params": {
+          "assetData": "Byte array encoded for the respective asset proxy."
+        }
+      },
+      "withdrawAsset(bytes,uint256)": {
+        "details": "Withdraws assets from this contract. The contract requires a ZRX balance in order to      function optimally, and this function allows the ZRX to be withdrawn by owner. It may also be      used to withdraw assets that were accidentally sent to this contract.",
+        "params": {
+          "amount": "Amount of ERC20 token to withdraw.",
+          "assetData": "Byte array encoded for the respective asset proxy."
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

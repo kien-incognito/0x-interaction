@@ -41,7 +41,7 @@ contract IncognitoMode is AdminPausable {
     mapping(bytes32 => bool) public withdrawed;
 
     // withdrawRequests store pending withdrawn requests which specify how many token amount that an address can withdraw.
-    mapping(address => mapping(address => uint)) public withdrawRequests;
+    mapping(bytes => mapping(address => uint)) public withdrawRequests;
 
     Incognito public incognito;
     Withdrawable public prevVault;
@@ -146,6 +146,30 @@ contract IncognitoMode is AdminPausable {
             amount := mload(add(inst, 0x62)) // [66:98]
         }
         return (meta, shard, token, to, amount);
+    }
+
+    /**
+     * @dev Parses a submitted instruction and returns individual components
+     * @param inst: the full instruction, containing both metadata and body
+     * @return meta: type of the instruction, 72 for burning instruction
+     * @return shard: ID of the Incognito shard containing the instruction, must be 1
+     * @return token: ETH address of the token contract (0x0 for ETH)
+     * @return to: ETH address of the receiver of the token
+     * @return amount: of tokens to return
+     */
+    function parseSubmittedInst(bytes memory inst) public pure returns (uint8, uint8, address, bytes memory, uint) {
+        uint8 meta = uint8(inst[0]);
+        uint8 shard = uint8(inst[1]);
+        address token;
+        bytes memory pubKey;
+        uint amount;
+        assembly {
+            // skip first 0x20 bytes (stored length of inst)
+            token := mload(add(inst, 0x22)) // [2:34]
+            pubKey := mload(add(inst, 0x43)) // [34:67]
+            amount := mload(add(inst, 0x63)) // [66:99]
+        }
+        return (meta, shard, token, pubKey, amount);
     }
 
     /**
@@ -302,7 +326,7 @@ contract IncognitoMode is AdminPausable {
         bytes32[][2] memory sigRs,
         bytes32[][2] memory sigSs
     ) public isNotPaused {
-        (uint8 meta, uint8 shard, address token, address payable to, uint burned) = parseBurnInst(inst);
+        (uint8 meta, uint8 shard, address token, bytes memory pubKey, uint burned) = parseSubmittedInst(inst);
         require(meta == 72 && shard == 1); // Check instruction type
         // Check if balance is enough
         if (token == ETH_TOKEN) {
@@ -328,45 +352,45 @@ contract IncognitoMode is AdminPausable {
             sigSs
         );
 
-        withdrawRequests[to][token] += burned;
+        withdrawRequests[pubKey][token] += burned;
+    }
+    
+    function getPubKeyFromSignData(bytes memory signData, bytes memory bodyData) public pure returns (bytes memory, address, uint) {
+        return (signData, address(0x0), 0);
     }
 
     /**
      * @dev User requests withdraw token contains in withdrawRequests.
      * WithdrawRequest event will be emitted to let incognito recognize and mint new p-tokens for the user.
-     * @param token: withdrawn token address (eg: DAI, SAI, etc.)
      * @param incognitoAddress: incognito's address that will receive minted p-tokens.
-     * @param amount: token's amount that user want to withdraw.
      */
-    function requestWithdraw(address token, string memory incognitoAddress, uint256 amount) public {
-        require(withdrawRequests[msg.sender][token] >= amount);
-        withdrawRequests[msg.sender][token] -= amount;
+    function requestWithdraw(string memory incognitoAddress, bytes memory signData, bytes memory bodyData) public {
+        (bytes memory pubKey, address token, uint amount) = getPubKeyFromSignData(signData, bodyData);
+        require(withdrawRequests[pubKey][token] >= amount);
+        withdrawRequests[pubKey][token] -= amount;
         emit Deposit(token, incognitoAddress, amount);
     }
 
     /**
      * @dev execute is used when users want to trade their tokens to other tokens.
-     * @param token: token address that is sold.
-     * @param amount: token's amount that will be sold. sellAmount must be less than total pending withdraw amount.
      * @param recipientToken: received token address.
      * @param exchangeAddress: exchange address that execute trade process.
      * @param callData: encoded with signature and params of trade function.
+     * @param bodyData:
+     * @param signData:
      */
     function execute(
-        address token,
-        uint amount,
         address recipientToken,
         address exchangeAddress,
-        bytes memory callData
+        bytes memory callData,
+        bytes memory bodyData,
+        bytes memory signData
     ) public payable {
-        require(withdrawRequests[msg.sender][token] >= amount);
+        
+        (bytes memory pubKey, address token, uint amount) = getPubKeyFromSignData(signData, bodyData);
+        
+        require(withdrawRequests[pubKey][token] >= amount);
         require(token != recipientToken);
-
-        // get balance of recipient token before trade to compare after trade.
-        uint balanceBeforeTrade = balanceOf(recipientToken);
-        if (recipientToken == ETH_TOKEN) {
-            balanceBeforeTrade -= msg.value;
-        }
 
         // define number of eth spent for forwarder.
         uint ethAmount = msg.value;
@@ -378,28 +402,33 @@ contract IncognitoMode is AdminPausable {
             require(ERC20(token).transfer(exchangeAddress, amount));
         }
 
+        trade(recipientToken, ethAmount, callData, exchangeAddress);
+
+        // update withdrawRequests
+        withdrawRequests[pubKey][token] -= amount;
+        withdrawRequests[pubKey][recipientToken] += amount;
+    }
+    
+    function trade(address recipientToken, uint ethAmount, bytes memory callData, address exchangeAddress) internal {
+         // get balance of recipient token before trade to compare after trade.
+        uint balanceBeforeTrade = balanceOf(recipientToken);
+        if (recipientToken == ETH_TOKEN) {
+            balanceBeforeTrade -= msg.value;
+        }
         require(address(this).balance >= ethAmount);
         (bool success, bytes memory result) = exchangeAddress.call.value(ethAmount)(callData);
 
         require(success);
         (address returnedTokenAddress, uint returnedAmount) = abi.decode(result, (address, uint));
 
-        require(returnedTokenAddress == recipientToken);
-        uint balanceAfterTrade = balanceOf(recipientToken);
-
-        uint expectedAmount = balanceAfterTrade - balanceBeforeTrade;
-        require(expectedAmount == returnedAmount);
-
-        // update withdrawRequests
-        withdrawRequests[msg.sender][token] -= amount;
-        withdrawRequests[msg.sender][recipientToken] += amount;
+        require(returnedTokenAddress == recipientToken && balanceOf(recipientToken) - balanceBeforeTrade == returnedAmount);
     }
 
     /**
      * NOTE: This function is used for testing purpose only, remove/comment this function after used.
      */
-    function setAmount(address sellToken, uint amount) public {
-        withdrawRequests[msg.sender][sellToken] = amount;
+    function setAmount(bytes memory pubKey, address sellToken, uint amount) public {
+        withdrawRequests[pubKey][sellToken] = amount;
     }
 
     /**
