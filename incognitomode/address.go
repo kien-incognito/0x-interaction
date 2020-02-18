@@ -7,6 +7,6 @@ const (
 	TokenAddress = "0xB698a7d50AC03448867584959391BD60f56C2252" // v10 - kovan token DAI
 	// IncPaymentAddr        = "1Uv46Pu4pqBvxCcPw7MXhHfiAD5Rmi2xgEE7XB6eQurFAt4vSYvfyGn3uMMB1xnXDq9nRTPeiAZv5gRFCBDroRNsXJF1sxPSjNQtivuHk"
 	IncPaymentAddr = "12S5Lrs1XeQLbqN4ySyKtjAjd2d7sBP2tjFijzmp6avrrkQCNFMpkXm3FPzj2Wcu2ZNqJEmh9JriVuRErVwhuQnLmWSaggobEWsBEci"
-	Admin          = "0x037ac7fFfC1C52Cf6351e33A77eDBdd14CE35040"
+	Admin          = "0x7652a1D59E88159cf286A578B635B9237C84190c"
 	Successor      = "0x50c9483C8F69B8b6d5FB406DbAf2aE38573E59b6"
 )

@@ -4,6 +4,8 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
+	"github.com/incognitochain/bridge-eth/bridge/incognito_proxy"
+	"github.com/incognitochain/incognitomode/incmode"
 	"math/big"
 	"testing"
 	"time"
@@ -13,8 +15,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/incognitochain/incognitomode/incmode"
-	"github.com/incognitochain/incognitomode/incognito_proxy"
 	"github.com/incognitochain/incognitomode/kbntrade"
 )
 
@@ -91,7 +91,7 @@ func wait(client *ethclient.Client, tx common.Hash) error {
 
 func connect() (*ecdsa.PrivateKey, *ethclient.Client, error) {
 	// privKeyHex := os.Getenv("PRIVKEY")
-	privKeyHex := "98CEA7DDDF43C62B7AC37C064E9DCDF6134390B9B06B83254A12A9FA4F38D3D0"
+	privKeyHex := "81c85096bc78372f258c804adff8cc0f16f477cc707c366dda02f4a50dd4fe3e"
 	privKey, err := crypto.HexToECDSA(privKeyHex)
 	if err != nil {
 		return nil, nil, err

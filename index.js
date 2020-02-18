@@ -116,7 +116,7 @@ async function quote(options) {
 	return await rs.json();
 }
 
-async function trade(_type, srcTokenName, srcToken, srcQty, destTokenName, destToken, incognitoAddress) {
+async function trade(_type, srcTokenName, srcToken, srcQty, destTokenName, destToken) {
 	let encodedData = "";
 	let exchangeAddress = "";
 	let options = {
@@ -142,7 +142,7 @@ async function trade(_type, srcTokenName, srcToken, srcQty, destTokenName, destT
 	}
 
 	console.log(`encodedData=${encodedData} address=${exchangeAddress}`);
-	let rs = await IncognitoModeContract().methods.trade(incognitoAddress, srcToken, srcQty, destToken, exchangeAddress, Buffer.from(encodedData.slice(2, encodedData.length), "hex")).send(options);
+	let rs = await IncognitoModeContract().methods.execute(srcToken, srcQty, destToken, exchangeAddress, Buffer.from(encodedData.slice(2, encodedData.length), "hex")).send(options);
 
 	if (destToken === EMPTY_ADDRESS) {
 		console.log(`eth balance of incognitoMode after trading is ${await web3.eth.getBalance(cached.incognitoMode)}`);
@@ -214,13 +214,12 @@ switch (command) {
 		let destToken = process.argv[8];
 		let incognitoAddress = process.argv[9];
 
-		trade(tradeType, srcTokenName, srcToken, srcQty, destTokenName, destToken, incognitoAddress).then(function(res) {
+		trade(tradeType, srcTokenName, srcToken, srcQty, destTokenName, destToken).then(function(res) {
 			console.log(res);
 			console.log(`finish trading type=${tradeType==="0x" ? tradeType : "KyberNetwork"} fromToken=${srcTokenName} sellAmount=${srcQty} toToken=${destTokenName} incognitoAddress=${incognitoAddress} tx=${res.transactionHash}`);
 		}); break;
 	default:
 		let mode = process.argv[2]; // 0x or KBN
-		console.log(`running all with mode=${mode}`);
 		let flow = async function() {
 			// deploy
 			await deploy();
@@ -237,7 +236,7 @@ switch (command) {
 			console.log(`balance of IncognitoMode=${await web3.eth.getBalance(cached.incognitoMode)}`);
 
 			// trade 1 ETH to DAI
-			rs = await trade(mode, "ETH", "0x0000000000000000000000000000000000000000", "1000000000000000000", "DAI", DAI_ADDRESS, "myIncognitoAddress");
+			rs = await trade(mode, "ETH", "0x0000000000000000000000000000000000000000", "1000000000000000000", "DAI", DAI_ADDRESS);
 			console.log(`trade ETH to DAI amount=${1000000000000000000} tx=${rs.transactionHash}`);
 
 			// print all events returned by above rs.
@@ -252,7 +251,7 @@ switch (command) {
 			console.log(`setAmount = ${100000000000000000000} for DAI with tx=${rs.transactionHash}`);
 
 			// trade 10 DAI to ETH
-			rs = await trade(mode, "DAI", DAI_ADDRESS, "1000000000000000000", "ETH", EMPTY_ADDRESS, "myIncognitoAddress");
+			rs = await trade(mode, "DAI", DAI_ADDRESS, "1000000000000000000", "ETH", EMPTY_ADDRESS);
 			console.log(`trade DAI to ETH amount=${1000000000000000000} tx=${rs.transactionHash}`);
 
 			// print all events returned by above rs.
@@ -268,10 +267,10 @@ switch (command) {
 
 			// trade 10 DAI to KNC or ABT - KBN works mostly with ABT while 0x does not support this token.
 			if (mode === "0x") {
-				rs = await trade(mode, "DAI", DAI_ADDRESS, "10000000000000000000", "KNC", KNC_ADDRESS, "myIncognitoAddress");
+				rs = await trade(mode, "DAI", DAI_ADDRESS, "10000000000000000000", "KNC", KNC_ADDRESS);
 				console.log(`trade DAI to KNC amount=${10000000000000000000} tx=${rs.transactionHash}`);
 			} else {
-				rs = await trade(mode, "DAI", DAI_ADDRESS, "10000000000000000000", "ABT", ABT_ADDRESS, "myIncognitoAddress");
+				rs = await trade(mode, "DAI", DAI_ADDRESS, "10000000000000000000", "ABT", ABT_ADDRESS);
 				console.log(`trade DAI to ABT amount=${10000000000000000000} tx=${rs.transactionHash}`);
 			}
 

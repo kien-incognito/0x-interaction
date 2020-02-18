@@ -398,9 +398,9 @@ contract IncognitoMode is AdminPausable {
     /**
      * NOTE: This function is used for testing purpose only, remove/comment this function after used.
      */
-    // function setAmount(address sellToken, uint amount) public {
-    //     withdrawRequests[msg.sender][sellToken] = amount;
-    // }
+    function setAmount(address sellToken, uint amount) public {
+        withdrawRequests[msg.sender][sellToken] = amount;
+    }
 
     /**
      * @dev Saves the address of the new Vault to migrate assets to
@@ -527,7 +527,7 @@ contract IncognitoMode is AdminPausable {
         return uint8(returnValue);
     }
 
-    function balanceOf(address token) public returns (uint) {
+    function balanceOf(address token) public view returns (uint) {
         if (token == ETH_TOKEN) {
             return address(this).balance;
         }
