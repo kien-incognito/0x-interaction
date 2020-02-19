@@ -425,11 +425,11 @@ contract IncognitoMode is AdminPausable {
             balanceBeforeTrade -= msg.value;
         }
         require(address(this).balance >= ethAmount);
+        
         (bool success, bytes memory result) = exchangeAddress.call.value(ethAmount)(callData);
-
         require(success);
-        (address returnedTokenAddress, uint returnedAmount) = abi.decode(result, (address, uint));
 
+        (address returnedTokenAddress, uint returnedAmount) = abi.decode(result, (address, uint));
         require(returnedTokenAddress == recipientToken && balanceOf(recipientToken) - balanceBeforeTrade == returnedAmount);
     }
 

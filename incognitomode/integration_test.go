@@ -32,7 +32,6 @@ type SampleData struct {
 
 const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000"
 
-
 var (
 	VERIFIER = common.HexToAddress("0x0858434298202ce0d76dbE20Ef5DA035CDEFc664")
 	SIG = common.Hex2Bytes("53550cb7de64582b075cb387ebb3cc6391f0e98f63236d869a628b2ca1541e4e1f3d2a6d88a088f48a9e5d4d14eba6bb4c2bbbbe62e6d95958d51c97daf193f500")
@@ -41,24 +40,24 @@ var (
 	SAI_ADDRESS = common.HexToAddress("0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359")
 	ETH_ADDRESS = common.HexToAddress(EMPTY_ADDRESS)
 	oneEth = big.NewInt(1000000000000000000)
-	aHundredEth = oneEth.Mul(oneEth, big.NewInt(100))
+	aHundredEth = big.NewInt(0).Mul(oneEth, big.NewInt(100))
 	samples = []SampleData{
-		{
-			"Kyber",
-			"ETH",
-			ETH_ADDRESS,
-			"DAI",
-			DAI_ADDRESS,
-			oneEth,
-		},
-		{
-			"Kyber",
-			"DAI",
-			DAI_ADDRESS,
-			"ETH",
-			ETH_ADDRESS,
-			oneEth, // 1 DAI
-		},
+		//{
+		//	"Kyber",
+		//	"ETH",
+		//	ETH_ADDRESS,
+		//	"DAI",
+		//	DAI_ADDRESS,
+		//	oneEth,
+		//},
+		//{
+		//	"Kyber",
+		//	"DAI",
+		//	DAI_ADDRESS,
+		//	"ETH",
+		//	ETH_ADDRESS,
+		//	oneEth, // 1 DAI
+		//},
 		//{
 		//	"Kyber",
 		//	"DAI",
