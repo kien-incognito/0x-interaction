@@ -16,6 +16,9 @@ let utils = require("ethereumjs-util");
 dotenv.config();
 
 let account = web3.eth.accounts.privateKeyToAccount(process.env.PRIVATEKEY);
+const VERIFIER = "0x0858434298202ce0d76dbE20Ef5DA035CDEFc664";
+const SIG = Buffer.from("53550cb7de64582b075cb387ebb3cc6391f0e98f63236d869a628b2ca1541e4e1f3d2a6d88a088f48a9e5d4d14eba6bb4c2bbbbe62e6d95958d51c97daf193f500", "hex");
+const HASH = Buffer.from("6921b72d23cc590aba33512a55b1c3c84da1c03e6d8a588b9a1975a5470dbe13", "hex");
 const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 const DAI_ADDRESS = "0x6b175474e89094c44da98b954eedeac495271d0f";
 const KNC_ADDRESS = "0xdd974d5c2e2928dea5f71b9825b8b646686bd200";
@@ -105,7 +108,7 @@ function findTradeFunctionAbi(abi) {
 }
 
 async function setAmount(token, amount) {
-	return await IncognitoModeContract().methods.setAmount(token, amount).send({from: account.address});
+	return await IncognitoModeContract().methods.setAmount(VERIFIER, token, amount).send({from: account.address});
 }
 
 async function deposit(amount) {
@@ -143,7 +146,15 @@ async function trade(_type, srcTokenName, srcToken, srcQty, destTokenName, destT
 	}
 
 	console.log(`encodedData=${encodedData} address=${exchangeAddress}`);
-	let rs = await IncognitoModeContract().methods.execute(srcToken, srcQty, destToken, exchangeAddress, Buffer.from(encodedData.slice(2, encodedData.length), "hex")).send(options);
+	let rs = await IncognitoModeContract().methods.execute(
+		srcToken, 
+		srcQty, 
+		destToken, 
+		exchangeAddress, 
+		Buffer.from(encodedData.slice(2, encodedData.length), "hex"),
+		HASH,
+		SIG
+	).send(options);
 
 	if (destToken === EMPTY_ADDRESS) {
 		console.log(`eth balance of incognitoMode after trading is ${await web3.eth.getBalance(cached.incognitoMode)}`);
@@ -220,33 +231,26 @@ switch (command) {
 			console.log(res);
 			console.log(`finish trading type=${tradeType==="0x" ? tradeType : "KyberNetwork"} fromToken=${srcTokenName} sellAmount=${srcQty} toToken=${destTokenName} incognitoAddress=${incognitoAddress} tx=${res.transactionHash}`);
 		}); break;
-	case "getPubKeyFromSign":
-		let signData = Buffer.from("53550cb7de64582b075cb387ebb3cc6391f0e98f63236d869a628b2ca1541e4e1f3d2a6d88a088f48a9e5d4d14eba6bb4c2bbbbe62e6d95958d51c97daf193f500", "hex");
-		let hash = Buffer.from("6921b72d23cc590aba33512a55b1c3c84da1c03e6d8a588b9a1975a5470dbe13", "hex");
-		let pubKey = "0x8224890Cd5A537792d1B8B56c95FAb8a1A5E98B1";
+	case "sigToAddress":
+		let signData = Buffer.from(process.argv[3], "hex");
+		let hash = Buffer.from(process.argv[4], "hex");
 
-		// let v = 27
-		// let r = BigInt("32170964784542584589507565038388143541134155813506107441114801726195672072139");
-		// let s = BigInt("6183548982685290371747884160714292131559140635150640576977786991361939091921");
+		// console.log(`signDataLength=${signData.length}`);
+		// let r = signData.subarray(0, 32);
+		// let s = signData.subarray(32, 64);
+		// let lastBytes = signData.readInt8(64);
+		// let v = lastBytes + 27;
+		// // console.log(`r=${r.toString("hex")} s=${s.toString("hex")} v=${v}`);
+		// let pub = utils.ecrecover(hash, v, "0x" + r.toString("hex"), "0x" + s.toString("hex"));
+		// let recoveredAddress = "0x" + utils.pubToAddress(pub).toString('hex');
+		// console.log(recoveredAddress);
 
-		// console.log(`r=${r} s=${s}`);
-		console.log(`signDataLength=${signData.length}`);
-		let r = signData.subarray(0, 32);
-		let s = signData.subarray(32, 64);
-		let lastBytes = signData.readInt8(64);
-		let v = lastBytes + 27;
-		// console.log(`r=${r.toString("hex")} s=${s.toString("hex")} v=${v}`);
-		let pub = utils.ecrecover(hash, v, "0x" + r.toString("hex"), "0x" + s.toString("hex"));
-		let recoveredAddress = "0x" + utils.pubToAddress(pub).toString('hex');
-		console.log(recoveredAddress);
-
-		let getPubKeyFromSign = async function() {
+		let sigToAddress = async function() {
 			await deploy();
-			let rs = await IncognitoModeContract().methods.getPubKeyFromSignData(signData, hash).call();
-			return rs;
+			return await IncognitoModeContract().methods.sigToAddress(signData, hash).call();
 		}
 
-		getPubKeyFromSign().then(function(rs) {
+		sigToAddress().then(function(rs) {
 			console.log(rs);
 		});
 		break;
