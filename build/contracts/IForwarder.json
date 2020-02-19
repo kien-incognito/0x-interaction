@@ -279,14 +279,14 @@
     "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IForwarder.sol",
     "exportedSymbols": {
       "IForwarder": [
-        3286
+        3331
       ]
     },
-    "id": 3287,
+    "id": 3332,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 3278,
+        "id": 3323,
         "literals": [
           "solidity",
           "^",
@@ -297,7 +297,7 @@
         "src": "580:23:9"
       },
       {
-        "id": 3279,
+        "id": 3324,
         "literals": [
           "experimental",
           "ABIEncoderV2"
@@ -308,10 +308,10 @@
       {
         "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IForwarderCore.sol",
         "file": "./IForwarderCore.sol",
-        "id": 3280,
+        "id": 3325,
         "nodeType": "ImportDirective",
-        "scope": 3287,
-        "sourceUnit": 3333,
+        "scope": 3332,
+        "sourceUnit": 3378,
         "src": "639:30:9",
         "symbolAliases": [],
         "unitAlias": ""
@@ -319,10 +319,10 @@
       {
         "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IAssets.sol",
         "file": "./IAssets.sol",
-        "id": 3281,
+        "id": 3326,
         "nodeType": "ImportDirective",
-        "scope": 3287,
-        "sourceUnit": 3277,
+        "scope": 3332,
+        "sourceUnit": 3322,
         "src": "670:23:9",
         "symbolAliases": [],
         "unitAlias": ""
@@ -333,17 +333,17 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 3282,
+              "id": 3327,
               "name": "IForwarderCore",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 3332,
+              "referencedDeclaration": 3377,
               "src": "758:14:9",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IForwarderCore_$3332",
+                "typeIdentifier": "t_contract$_IForwarderCore_$3377",
                 "typeString": "contract IForwarderCore"
               }
             },
-            "id": 3283,
+            "id": 3328,
             "nodeType": "InheritanceSpecifier",
             "src": "758:14:9"
           },
@@ -351,38 +351,38 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 3284,
+              "id": 3329,
               "name": "IAssets",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 3276,
+              "referencedDeclaration": 3321,
               "src": "778:7:9",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IAssets_$3276",
+                "typeIdentifier": "t_contract$_IAssets_$3321",
                 "typeString": "contract IAssets"
               }
             },
-            "id": 3285,
+            "id": 3330,
             "nodeType": "InheritanceSpecifier",
             "src": "778:7:9"
           }
         ],
         "contractDependencies": [
-          3276,
-          3332
+          3321,
+          3377
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 3286,
+        "id": 3331,
         "linearizedBaseContracts": [
-          3286,
-          3276,
-          3332
+          3331,
+          3321,
+          3377
         ],
         "name": "IForwarder",
         "nodeType": "ContractDefinition",
         "nodes": [],
-        "scope": 3287,
+        "scope": 3332,
         "src": "731:57:9"
       }
     ],
@@ -392,14 +392,14 @@
     "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IForwarder.sol",
     "exportedSymbols": {
       "IForwarder": [
-        3286
+        3331
       ]
     },
-    "id": 3287,
+    "id": 3332,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 3278,
+        "id": 3323,
         "literals": [
           "solidity",
           "^",
@@ -410,7 +410,7 @@
         "src": "580:23:9"
       },
       {
-        "id": 3279,
+        "id": 3324,
         "literals": [
           "experimental",
           "ABIEncoderV2"
@@ -421,10 +421,10 @@
       {
         "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IForwarderCore.sol",
         "file": "./IForwarderCore.sol",
-        "id": 3280,
+        "id": 3325,
         "nodeType": "ImportDirective",
-        "scope": 3287,
-        "sourceUnit": 3333,
+        "scope": 3332,
+        "sourceUnit": 3378,
         "src": "639:30:9",
         "symbolAliases": [],
         "unitAlias": ""
@@ -432,10 +432,10 @@
       {
         "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IAssets.sol",
         "file": "./IAssets.sol",
-        "id": 3281,
+        "id": 3326,
         "nodeType": "ImportDirective",
-        "scope": 3287,
-        "sourceUnit": 3277,
+        "scope": 3332,
+        "sourceUnit": 3322,
         "src": "670:23:9",
         "symbolAliases": [],
         "unitAlias": ""
@@ -446,17 +446,17 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 3282,
+              "id": 3327,
               "name": "IForwarderCore",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 3332,
+              "referencedDeclaration": 3377,
               "src": "758:14:9",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IForwarderCore_$3332",
+                "typeIdentifier": "t_contract$_IForwarderCore_$3377",
                 "typeString": "contract IForwarderCore"
               }
             },
-            "id": 3283,
+            "id": 3328,
             "nodeType": "InheritanceSpecifier",
             "src": "758:14:9"
           },
@@ -464,38 +464,38 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 3284,
+              "id": 3329,
               "name": "IAssets",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 3276,
+              "referencedDeclaration": 3321,
               "src": "778:7:9",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IAssets_$3276",
+                "typeIdentifier": "t_contract$_IAssets_$3321",
                 "typeString": "contract IAssets"
               }
             },
-            "id": 3285,
+            "id": 3330,
             "nodeType": "InheritanceSpecifier",
             "src": "778:7:9"
           }
         ],
         "contractDependencies": [
-          3276,
-          3332
+          3321,
+          3377
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 3286,
+        "id": 3331,
         "linearizedBaseContracts": [
-          3286,
-          3276,
-          3332
+          3331,
+          3321,
+          3377
         ],
         "name": "IForwarder",
         "nodeType": "ContractDefinition",
         "nodes": [],
-        "scope": 3287,
+        "scope": 3332,
         "src": "731:57:9"
       }
     ],
@@ -507,7 +507,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-02-18T09:23:42.224Z",
+  "updatedAt": "2020-02-19T03:47:12.211Z",
   "devdoc": {
     "methods": {
       "approveMakerAssetProxy(bytes)": {

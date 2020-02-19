@@ -11,6 +11,7 @@ let dotenv = require('dotenv');
 let web3 = new Web3('http://localhost:8545');
 let BigNumber = require("@0x/utils").BigNumber;
 let contractAddresses = require("@0x/contract-addresses");
+let utils = require("ethereumjs-util");
 
 dotenv.config();
 
@@ -177,6 +178,7 @@ async function tradeKBN(srcToken, srcQty, destToken) {
 }
 
 const command = process.argv[2];
+console.log(command);
 let amount = 0;
 switch (command) {
 	case "deploy":
@@ -218,6 +220,36 @@ switch (command) {
 			console.log(res);
 			console.log(`finish trading type=${tradeType==="0x" ? tradeType : "KyberNetwork"} fromToken=${srcTokenName} sellAmount=${srcQty} toToken=${destTokenName} incognitoAddress=${incognitoAddress} tx=${res.transactionHash}`);
 		}); break;
+	case "getPubKeyFromSign":
+		let signData = Buffer.from("53550cb7de64582b075cb387ebb3cc6391f0e98f63236d869a628b2ca1541e4e1f3d2a6d88a088f48a9e5d4d14eba6bb4c2bbbbe62e6d95958d51c97daf193f500", "hex");
+		let hash = Buffer.from("6921b72d23cc590aba33512a55b1c3c84da1c03e6d8a588b9a1975a5470dbe13", "hex");
+		let pubKey = "0x8224890Cd5A537792d1B8B56c95FAb8a1A5E98B1";
+
+		// let v = 27
+		// let r = BigInt("32170964784542584589507565038388143541134155813506107441114801726195672072139");
+		// let s = BigInt("6183548982685290371747884160714292131559140635150640576977786991361939091921");
+
+		// console.log(`r=${r} s=${s}`);
+		console.log(`signDataLength=${signData.length}`);
+		let r = signData.subarray(0, 32);
+		let s = signData.subarray(32, 64);
+		let lastBytes = signData.readInt8(64);
+		let v = lastBytes + 27;
+		// console.log(`r=${r.toString("hex")} s=${s.toString("hex")} v=${v}`);
+		let pub = utils.ecrecover(hash, v, "0x" + r.toString("hex"), "0x" + s.toString("hex"));
+		let recoveredAddress = "0x" + utils.pubToAddress(pub).toString('hex');
+		console.log(recoveredAddress);
+
+		let getPubKeyFromSign = async function() {
+			await deploy();
+			let rs = await IncognitoModeContract().methods.getPubKeyFromSignData(signData, hash).call();
+			return rs;
+		}
+
+		getPubKeyFromSign().then(function(rs) {
+			console.log(rs);
+		});
+		break;
 	default:
 		let mode = process.argv[2]; // 0x or KBN
 		let flow = async function() {

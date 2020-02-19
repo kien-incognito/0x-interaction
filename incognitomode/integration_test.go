@@ -32,9 +32,12 @@ type SampleData struct {
 
 const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000"
 
+
 var (
+	VERIFIER = common.HexToAddress("0x0858434298202ce0d76dbE20Ef5DA035CDEFc664")
+	SIG = common.Hex2Bytes("53550cb7de64582b075cb387ebb3cc6391f0e98f63236d869a628b2ca1541e4e1f3d2a6d88a088f48a9e5d4d14eba6bb4c2bbbbe62e6d95958d51c97daf193f500")
+	HASH = common.Hex2Bytes("6921b72d23cc590aba33512a55b1c3c84da1c03e6d8a588b9a1975a5470dbe13")
 	DAI_ADDRESS = common.HexToAddress("0x6b175474e89094c44da98b954eedeac495271d0f")
-	ABT_ADDRESS = common.HexToAddress("0xb98d4c97425d9908e66e53a6fdf673acca0be986")
 	SAI_ADDRESS = common.HexToAddress("0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359")
 	ETH_ADDRESS = common.HexToAddress(EMPTY_ADDRESS)
 	oneEth = big.NewInt(1000000000000000000)
@@ -186,7 +189,7 @@ func getAuth(privKey *ecdsa.PrivateKey) *bind.TransactOpts {
 	auth := bind.NewKeyedTransactor(privKey)
 	auth.Value = big.NewInt(0)
 	auth.GasPrice = big.NewInt(10000000000)
-	auth.GasLimit = 4000000
+	auth.GasLimit = 5000000
 	return auth
 }
 
@@ -237,7 +240,7 @@ func (suite *IntegrationTestSuite)trade(_type string, srcName, destName string, 
 
 	auth := getAuth(suite.privKey)
 	// setAmount
-	if tx, err = suite.incMode.SetAmount(auth, srcToken, srcQty); err != nil {
+	if tx, err = suite.incMode.SetAmount(auth, VERIFIER, srcToken, srcQty); err != nil {
 		suite.T().Fatal(err)
 	}
 	// Wait until tx is confirmed
@@ -260,7 +263,7 @@ func (suite *IntegrationTestSuite)trade(_type string, srcName, destName string, 
 		suite.T().Fatal(err)
 	}
 	// trigger execute function from incognitoMode
-	if tx, err = suite.incMode.Execute(auth, srcToken, srcQty, destToken, tradeAddress, input); err != nil {
+	if tx, err = suite.incMode.Execute(auth, srcToken, srcQty, destToken, tradeAddress, input, bytes32(HASH), SIG); err != nil {
 		println(fmt.Sprintf("execute failed: type=%v src=%v dest=%v quantity=%v", _type, srcName, destName, srcQty.String()))
 		suite.T().Fatal(err)
 	}
@@ -276,7 +279,16 @@ func (suite *IntegrationTestSuite)trade(_type string, srcName, destName string, 
 	println(balance.String())
 }
 
+func bytes32(data []byte) (result [32]byte) {
+	for i:=0; i < 32; i++ {
+		result[i] = data[i]
+	}
+	return result
+}
+
 func TestIntegrationTestSuite(t *testing.T) {
 	s.Run(t, new(IntegrationTestSuite))
 }
+
+
 

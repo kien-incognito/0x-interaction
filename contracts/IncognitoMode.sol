@@ -41,7 +41,7 @@ contract IncognitoMode is AdminPausable {
     mapping(bytes32 => bool) public withdrawed;
 
     // withdrawRequests store pending withdrawn requests which specify how many token amount that an address can withdraw.
-    mapping(bytes => mapping(address => uint)) public withdrawRequests;
+    mapping(address => mapping(address => uint)) public withdrawRequests;
 
     Incognito public incognito;
     Withdrawable public prevVault;
@@ -54,6 +54,15 @@ contract IncognitoMode is AdminPausable {
     event MoveAssets(address[] assets);
     event UpdateIncognitoProxy(address newIncognitoProxy);
     event Trade(string incognitoAddress, address token, uint amount);
+    
+    struct BurnInst {
+        uint8 flag;
+        uint8 meta;
+        uint8 shard;
+        address token;
+        address payable to;
+        uint burned;
+    }
 
     /**
      * @dev Creates new Vault to hold assets for Incognito Chain
@@ -127,49 +136,37 @@ contract IncognitoMode is AdminPausable {
     /**
      * @dev Parses a burn instruction and returns individual components
      * @param inst: the full instruction, containing both metadata and body
+     * @return flag: 
      * @return meta: type of the instruction, 72 for burning instruction
      * @return shard: ID of the Incognito shard containing the instruction, must be 1
      * @return token: ETH address of the token contract (0x0 for ETH)
      * @return to: ETH address of the receiver of the token
      * @return amount: of tokens to return
      */
-    function parseBurnInst(bytes memory inst) public pure returns (uint8, uint8, address, address payable, uint) {
-        uint8 meta = uint8(inst[0]);
-        uint8 shard = uint8(inst[1]);
+    function parseBurnInst(bytes memory inst) public pure returns (uint8, uint8, uint8, address, address payable, uint) {
+        uint8 flag = uint8(inst[0]);
+        uint8 meta = uint8(inst[1]);
+        uint8 shard = uint8(inst[2]);
         address token;
         address payable to;
         uint amount;
         assembly {
             // skip first 0x20 bytes (stored length of inst)
-            token := mload(add(inst, 0x22)) // [2:34]
-            to := mload(add(inst, 0x42)) // [34:66]
-            amount := mload(add(inst, 0x62)) // [66:98]
+            token := mload(add(inst, 0x23)) // [3:35]
+            to := mload(add(inst, 0x43)) // [35:67]
+            amount := mload(add(inst, 0x63)) // [67:99]
         }
-        return (meta, shard, token, to, amount);
+        return (flag, meta, shard, token, to, amount);
     }
-
+    
     /**
-     * @dev Parses a submitted instruction and returns individual components
+     * @dev returns BurnInst object.
      * @param inst: the full instruction, containing both metadata and body
-     * @return meta: type of the instruction, 72 for burning instruction
-     * @return shard: ID of the Incognito shard containing the instruction, must be 1
-     * @return token: ETH address of the token contract (0x0 for ETH)
-     * @return to: ETH address of the receiver of the token
-     * @return amount: of tokens to return
      */
-    function parseSubmittedInst(bytes memory inst) public pure returns (uint8, uint8, address, bytes memory, uint) {
-        uint8 meta = uint8(inst[0]);
-        uint8 shard = uint8(inst[1]);
-        address token;
-        bytes memory pubKey;
-        uint amount;
-        assembly {
-            // skip first 0x20 bytes (stored length of inst)
-            token := mload(add(inst, 0x22)) // [2:34]
-            pubKey := mload(add(inst, 0x43)) // [34:67]
-            amount := mload(add(inst, 0x63)) // [66:99]
-        }
-        return (meta, shard, token, pubKey, amount);
+    function getBurnInst(bytes memory inst) internal pure returns (BurnInst memory) {
+        (uint8 flag, uint8 meta, uint8 shard, address token, address payable to, uint burned) = parseBurnInst(inst);
+        BurnInst memory burnInst = BurnInst({flag: flag, meta: meta, shard: shard, token: token, to: to, burned: burned});
+        return burnInst;
     }
 
     /**
@@ -258,18 +255,18 @@ contract IncognitoMode is AdminPausable {
         bytes32[][2] memory sigRs,
         bytes32[][2] memory sigSs
     ) public isNotPaused {
-        (uint8 meta, uint8 shard, address token, address payable to, uint burned) = parseBurnInst(inst);
-        require(meta == 72 && shard == 1); // Check instruction type
+        BurnInst memory burnInst = getBurnInst(inst);
+        require(burnInst.meta == 72 && burnInst.shard == 1); // Check instruction type
 
         // Check if balance is enough
-        if (token == ETH_TOKEN) {
-            require(address(this).balance >= burned);
+        if (burnInst.token == ETH_TOKEN) {
+            require(address(this).balance >= burnInst.burned);
         } else {
-            uint8 decimals = getDecimals(token);
+            uint8 decimals = getDecimals(burnInst.token);
             if (decimals > 9) {
-                burned = burned * (10 ** (uint(decimals) - 9));
+                burnInst.burned = burnInst.burned * (10 ** (uint(decimals) - 9));
             }
-            require(ERC20(token).balanceOf(address(this)) >= burned);
+            require(ERC20(burnInst.token).balanceOf(address(this)) >= burnInst.burned);
         }
 
         verifyInst(
@@ -286,13 +283,13 @@ contract IncognitoMode is AdminPausable {
         );
 
         // Send and notify
-        if (token == ETH_TOKEN) {
-            to.transfer(burned);
+        if (burnInst.token == ETH_TOKEN) {
+            burnInst.to.transfer(burnInst.burned);
         } else {
-            ERC20(token).transfer(to, burned);
+            ERC20(burnInst.token).transfer(burnInst.to, burnInst.burned);
             require(checkSuccess());
         }
-        emit Withdraw(token, to, burned);
+        emit Withdraw(burnInst.token, burnInst.to, burnInst.burned);
     }
 
     /**
@@ -326,17 +323,17 @@ contract IncognitoMode is AdminPausable {
         bytes32[][2] memory sigRs,
         bytes32[][2] memory sigSs
     ) public isNotPaused {
-        (uint8 meta, uint8 shard, address token, bytes memory pubKey, uint burned) = parseSubmittedInst(inst);
-        require(meta == 72 && shard == 1); // Check instruction type
+        BurnInst memory burnInst = getBurnInst(inst);
+        require(burnInst.meta == 72 && burnInst.shard == 1); // Check instruction type
         // Check if balance is enough
-        if (token == ETH_TOKEN) {
-            require(address(this).balance >= burned);
+        if (burnInst.token == ETH_TOKEN) {
+            require(address(this).balance >= burnInst.burned);
         } else {
-            uint8 decimals = getDecimals(token);
+            uint8 decimals = getDecimals(burnInst.token);
             if (decimals > 9) {
-                burned = burned * (10 ** (uint(decimals) - 9));
+                burnInst.burned = burnInst.burned * (10 ** (uint(decimals) - 9));
             }
-            require(ERC20(token).balanceOf(address(this)) >= burned);
+            require(ERC20(burnInst.token).balanceOf(address(this)) >= burnInst.burned);
         }
 
         verifyInst(
@@ -352,11 +349,22 @@ contract IncognitoMode is AdminPausable {
             sigSs
         );
 
-        withdrawRequests[pubKey][token] += burned;
+        withdrawRequests[burnInst.to][burnInst.token] += burnInst.burned;
     }
     
-    function getPubKeyFromSignData(bytes memory signData, bytes memory bodyData) public pure returns (bytes memory, address, uint) {
-        return (signData, address(0x0), 0);
+    /**
+     * @dev generate address from signature data and hash.
+     */
+    function sigToAddress(bytes memory signData, bytes32 hash) public pure returns (address) {
+        bytes32 s;
+        bytes32 r;
+        uint8 v;
+        assembly {
+            r := mload(add(signData, 0x20))
+            s := mload(add(signData, 0x40))
+        }
+        v = uint8(signData[64]) + 27;
+        return ecrecover(hash, v, r, s);
     }
 
     /**
@@ -364,10 +372,10 @@ contract IncognitoMode is AdminPausable {
      * WithdrawRequest event will be emitted to let incognito recognize and mint new p-tokens for the user.
      * @param incognitoAddress: incognito's address that will receive minted p-tokens.
      */
-    function requestWithdraw(string memory incognitoAddress, bytes memory signData, bytes memory bodyData) public {
-        (bytes memory pubKey, address token, uint amount) = getPubKeyFromSignData(signData, bodyData);
-        require(withdrawRequests[pubKey][token] >= amount);
-        withdrawRequests[pubKey][token] -= amount;
+    function requestWithdraw(string memory incognitoAddress, address token, uint amount, bytes memory signData, bytes32 hash) public {
+        address verifier = sigToAddress(signData, hash);
+        require(withdrawRequests[verifier][token] >= amount);
+        withdrawRequests[verifier][token] -= amount;
         emit Deposit(token, incognitoAddress, amount);
     }
 
@@ -376,20 +384,21 @@ contract IncognitoMode is AdminPausable {
      * @param recipientToken: received token address.
      * @param exchangeAddress: exchange address that execute trade process.
      * @param callData: encoded with signature and params of trade function.
-     * @param bodyData:
+     * @param hash:
      * @param signData:
      */
     function execute(
+        address token,
+        uint amount,
         address recipientToken,
         address exchangeAddress,
         bytes memory callData,
-        bytes memory bodyData,
+        bytes32 hash,
         bytes memory signData
     ) public payable {
+        address verifier = sigToAddress(signData, hash);
         
-        (bytes memory pubKey, address token, uint amount) = getPubKeyFromSignData(signData, bodyData);
-        
-        require(withdrawRequests[pubKey][token] >= amount);
+        require(withdrawRequests[verifier][token] >= amount);
         require(token != recipientToken);
 
         // define number of eth spent for forwarder.
@@ -405,8 +414,8 @@ contract IncognitoMode is AdminPausable {
         trade(recipientToken, ethAmount, callData, exchangeAddress);
 
         // update withdrawRequests
-        withdrawRequests[pubKey][token] -= amount;
-        withdrawRequests[pubKey][recipientToken] += amount;
+        withdrawRequests[verifier][token] -= amount;
+        withdrawRequests[verifier][recipientToken] += amount;
     }
     
     function trade(address recipientToken, uint ethAmount, bytes memory callData, address exchangeAddress) internal {
@@ -427,8 +436,8 @@ contract IncognitoMode is AdminPausable {
     /**
      * NOTE: This function is used for testing purpose only, remove/comment this function after used.
      */
-    function setAmount(bytes memory pubKey, address sellToken, uint amount) public {
-        withdrawRequests[pubKey][sellToken] = amount;
+    function setAmount(address verifier, address sellToken, uint amount) public {
+        withdrawRequests[verifier][sellToken] = amount;
     }
 
     /**
