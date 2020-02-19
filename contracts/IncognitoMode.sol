@@ -143,7 +143,26 @@ contract IncognitoMode is AdminPausable {
      * @return to: ETH address of the receiver of the token
      * @return amount: of tokens to return
      */
-    function parseBurnInst(bytes memory inst) public pure returns (uint8, uint8, uint8, address, address payable, uint) {
+    function parseBurnInst(bytes memory inst) public pure returns (uint8, uint8, address, address payable, uint) {
+        uint8 meta = uint8(inst[0]);
+        uint8 shard = uint8(inst[1]);
+        address token;
+        address payable to;
+        uint amount;
+        assembly {
+            // skip first 0x20 bytes (stored length of inst)
+            token := mload(add(inst, 0x22)) // [3:34]
+            to := mload(add(inst, 0x42)) // [34:66]
+            amount := mload(add(inst, 0x62)) // [66:98]
+        }
+        return (meta, shard, token, to, amount);
+    }
+    
+    /**
+     * @dev returns BurnInst object. This function is used in submitBurnProof function.
+     * @param inst: the full instruction, containing both metadata and body
+     */
+    function getBurnInst(bytes memory inst) internal pure returns (BurnInst memory) {
         uint8 flag = uint8(inst[0]);
         uint8 meta = uint8(inst[1]);
         uint8 shard = uint8(inst[2]);
@@ -156,16 +175,7 @@ contract IncognitoMode is AdminPausable {
             to := mload(add(inst, 0x43)) // [35:67]
             amount := mload(add(inst, 0x63)) // [67:99]
         }
-        return (flag, meta, shard, token, to, amount);
-    }
-    
-    /**
-     * @dev returns BurnInst object.
-     * @param inst: the full instruction, containing both metadata and body
-     */
-    function getBurnInst(bytes memory inst) internal pure returns (BurnInst memory) {
-        (uint8 flag, uint8 meta, uint8 shard, address token, address payable to, uint burned) = parseBurnInst(inst);
-        BurnInst memory burnInst = BurnInst({flag: flag, meta: meta, shard: shard, token: token, to: to, burned: burned});
+        BurnInst memory burnInst = BurnInst({flag: flag, meta: meta, shard: shard, token: token, to: to, burned: amount});
         return burnInst;
     }
 
@@ -255,18 +265,18 @@ contract IncognitoMode is AdminPausable {
         bytes32[][2] memory sigRs,
         bytes32[][2] memory sigSs
     ) public isNotPaused {
-        BurnInst memory burnInst = getBurnInst(inst);
-        require(burnInst.meta == 72 && burnInst.shard == 1); // Check instruction type
+        (uint8 meta, uint8 shard, address token, address payable to, uint burned) = parseBurnInst(inst);
+        require(meta == 72 && shard == 1); // Check instruction type
 
         // Check if balance is enough
-        if (burnInst.token == ETH_TOKEN) {
-            require(address(this).balance >= burnInst.burned);
+        if (token == ETH_TOKEN) {
+            require(address(this).balance >= burned);
         } else {
-            uint8 decimals = getDecimals(burnInst.token);
+            uint8 decimals = getDecimals(token);
             if (decimals > 9) {
-                burnInst.burned = burnInst.burned * (10 ** (uint(decimals) - 9));
+                burned = burned * (10 ** (uint(decimals) - 9));
             }
-            require(ERC20(burnInst.token).balanceOf(address(this)) >= burnInst.burned);
+            require(ERC20(token).balanceOf(address(this)) >= burned);
         }
 
         verifyInst(
@@ -283,13 +293,13 @@ contract IncognitoMode is AdminPausable {
         );
 
         // Send and notify
-        if (burnInst.token == ETH_TOKEN) {
-            burnInst.to.transfer(burnInst.burned);
+        if (token == ETH_TOKEN) {
+            to.transfer(burned);
         } else {
-            ERC20(burnInst.token).transfer(burnInst.to, burnInst.burned);
+            ERC20(token).transfer(to, burned);
             require(checkSuccess());
         }
-        emit Withdraw(burnInst.token, burnInst.to, burnInst.burned);
+        emit Withdraw(token, to, burned);
     }
 
     /**
@@ -425,11 +435,11 @@ contract IncognitoMode is AdminPausable {
             balanceBeforeTrade -= msg.value;
         }
         require(address(this).balance >= ethAmount);
-        
         (bool success, bytes memory result) = exchangeAddress.call.value(ethAmount)(callData);
-        require(success);
 
+        require(success);
         (address returnedTokenAddress, uint returnedAmount) = abi.decode(result, (address, uint));
+
         require(returnedTokenAddress == recipientToken && balanceOf(recipientToken) - balanceBeforeTrade == returnedAmount);
     }
 
