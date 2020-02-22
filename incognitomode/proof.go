@@ -54,6 +54,20 @@ func getAndDecodeBurnProof(txID string) (*decodedProof, error) {
 	return decodeProof(&r)
 }
 
+func getAndDecodeBurnForDepositToSCProof(txID string) (*decodedProof, error) {
+	body := getBurnForDepositToSCProof(txID)
+	if len(body) < 1 {
+		return nil, fmt.Errorf("burn proof not found")
+	}
+
+	r := getProofResult{}
+	err := json.Unmarshal([]byte(body), &r)
+	if err != nil {
+		return nil, err
+	}
+	return decodeProof(&r)
+}
+
 func getCommittee(url string) ([]common.Address, []common.Address, error) {
 	payload := strings.NewReader("{\n    \"id\": 1,\n    \"jsonrpc\": \"1.0\",\n    \"method\": \"getbeaconbeststate\",\n    \"params\": []\n}")
 
@@ -110,6 +124,32 @@ func getCommittee(url string) ([]common.Address, []common.Address, error) {
 	}
 
 	return beaconOld, bridgeOld, nil
+}
+
+func getBurnForDepositToSCProof(txID string) string {
+	// url := "http://127.0.0.1:9344"
+	// url := "https://dev-test-node.incognito.org/"
+	// url := "https://mainnet.incognito.org/fullnode"
+	url := "http://127.0.0.1:9338"
+
+	if len(txID) == 0 {
+		txID = "87c89c1c19cec3061eff9cfefdcc531d9456ac48de568b3974c5b0a88d5f3834"
+	}
+	payload := strings.NewReader(fmt.Sprintf("{\n    \"id\": 1,\n    \"jsonrpc\": \"1.0\",\n    \"method\": \"getburnprooffordeposittosc\",\n    \"params\": [\n    \t\"%s\"\n    ]\n}", txID))
+
+	req, _ := http.NewRequest("POST", url, payload)
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("err:", err)
+		return ""
+	}
+
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+
+	//fmt.Println(string(body))
+	return string(body)
 }
 
 func getBurnProof(txID string) string {

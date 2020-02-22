@@ -29,6 +29,7 @@ contract Incognito {
  */
 contract Withdrawable {
     function isWithdrawed(bytes32) public view returns (bool);
+    function isSigDataUsed(bytes32) public view returns (bool);
 }
 
 /**
@@ -39,9 +40,11 @@ contract Withdrawable {
 contract IncognitoMode is AdminPausable {
     address constant public ETH_TOKEN = 0x0000000000000000000000000000000000000000;
     mapping(bytes32 => bool) public withdrawed;
+    mapping(bytes32 => bool) public sigDataUsed;
 
     // withdrawRequests store pending withdrawn requests which specify how many token amount that an address can withdraw.
     mapping(address => mapping(address => uint)) public withdrawRequests;
+    mapping(address => uint) public totalDepositedToSCAmount;
 
     Incognito public incognito;
     Withdrawable public prevVault;
@@ -54,15 +57,6 @@ contract IncognitoMode is AdminPausable {
     event MoveAssets(address[] assets);
     event UpdateIncognitoProxy(address newIncognitoProxy);
     event Trade(string incognitoAddress, address token, uint amount);
-    
-    struct BurnInst {
-        uint8 flag;
-        uint8 meta;
-        uint8 shard;
-        address token;
-        address payable to;
-        uint burned;
-    }
 
     /**
      * @dev Creates new Vault to hold assets for Incognito Chain
@@ -136,7 +130,7 @@ contract IncognitoMode is AdminPausable {
     /**
      * @dev Parses a burn instruction and returns individual components
      * @param inst: the full instruction, containing both metadata and body
-     * @return flag: 
+     * @return flag:
      * @return meta: type of the instruction, 72 for burning instruction
      * @return shard: ID of the Incognito shard containing the instruction, must be 1
      * @return token: ETH address of the token contract (0x0 for ETH)
@@ -156,27 +150,6 @@ contract IncognitoMode is AdminPausable {
             amount := mload(add(inst, 0x62)) // [66:98]
         }
         return (meta, shard, token, to, amount);
-    }
-    
-    /**
-     * @dev returns BurnInst object. This function is used in submitBurnProof function.
-     * @param inst: the full instruction, containing both metadata and body
-     */
-    function getBurnInst(bytes memory inst) internal pure returns (BurnInst memory) {
-        uint8 flag = uint8(inst[0]);
-        uint8 meta = uint8(inst[1]);
-        uint8 shard = uint8(inst[2]);
-        address token;
-        address payable to;
-        uint amount;
-        assembly {
-            // skip first 0x20 bytes (stored length of inst)
-            token := mload(add(inst, 0x23)) // [3:35]
-            to := mload(add(inst, 0x43)) // [35:67]
-            amount := mload(add(inst, 0x63)) // [67:99]
-        }
-        BurnInst memory burnInst = BurnInst({flag: flag, meta: meta, shard: shard, token: token, to: to, burned: amount});
-        return burnInst;
     }
 
     /**
@@ -270,13 +243,13 @@ contract IncognitoMode is AdminPausable {
 
         // Check if balance is enough
         if (token == ETH_TOKEN) {
-            require(address(this).balance >= burned);
+            require(address(this).balance >= burned + totalDepositedToSCAmount[token]);
         } else {
             uint8 decimals = getDecimals(token);
             if (decimals > 9) {
                 burned = burned * (10 ** (uint(decimals) - 9));
             }
-            require(ERC20(token).balanceOf(address(this)) >= burned);
+            require(ERC20(token).balanceOf(address(this)) >= burned + totalDepositedToSCAmount[token]);
         }
 
         verifyInst(
@@ -333,17 +306,17 @@ contract IncognitoMode is AdminPausable {
         bytes32[][2] memory sigRs,
         bytes32[][2] memory sigSs
     ) public isNotPaused {
-        BurnInst memory burnInst = getBurnInst(inst);
-        require(burnInst.meta == 72 && burnInst.shard == 1); // Check instruction type
+        (uint8 meta, uint8 shard, address token, address payable to, uint burned) = parseBurnInst(inst);
+        require(meta == 97 && shard == 1); // Check instruction type
         // Check if balance is enough
-        if (burnInst.token == ETH_TOKEN) {
-            require(address(this).balance >= burnInst.burned);
+        if (token == ETH_TOKEN) {
+            require(address(this).balance >= burned + totalDepositedToSCAmount[token]);
         } else {
-            uint8 decimals = getDecimals(burnInst.token);
+            uint8 decimals = getDecimals(token);
             if (decimals > 9) {
-                burnInst.burned = burnInst.burned * (10 ** (uint(decimals) - 9));
+                burned = burned * (10 ** (uint(decimals) - 9));
             }
-            require(ERC20(burnInst.token).balanceOf(address(this)) >= burnInst.burned);
+            require(ERC20(token).balanceOf(address(this)) >= burned + totalDepositedToSCAmount[token]);
         }
 
         verifyInst(
@@ -359,9 +332,10 @@ contract IncognitoMode is AdminPausable {
             sigSs
         );
 
-        withdrawRequests[burnInst.to][burnInst.token] += burnInst.burned;
+        withdrawRequests[to][token] += burned;
+        totalDepositedToSCAmount[token] += burned;
     }
-    
+
     /**
      * @dev generate address from signature data and hash.
      */
@@ -378,24 +352,69 @@ contract IncognitoMode is AdminPausable {
     }
 
     /**
-     * @dev User requests withdraw token contains in withdrawRequests.
-     * WithdrawRequest event will be emitted to let incognito recognize and mint new p-tokens for the user.
-     * @param incognitoAddress: incognito's address that will receive minted p-tokens.
+     * @dev Checks if a sig data has been used before
+     * @notice First, we check inside the storage of this contract itself. If the
+     * hash has been used before, we return the result. Otherwise, we query
+     * previous vault recursively until the first Vault (prevVault address is 0x0)
+     * @param hash: of the sig data
+     * @return bool: whether the sig data has been used or not
      */
-    function requestWithdraw(string memory incognitoAddress, address token, uint amount, bytes memory signData, bytes32 hash) public {
-        address verifier = sigToAddress(signData, hash);
-        require(withdrawRequests[verifier][token] >= amount);
-        withdrawRequests[verifier][token] -= amount;
-        emit Deposit(token, incognitoAddress, amount);
+    function isSigDataUsed(bytes32 hash) public view returns(bool) {
+        if (sigDataUsed[hash]) {
+            return true;
+        } else if (address(prevVault) == address(0)) {
+            return false;
+        }
+        return prevVault.isSigDataUsed(hash);
     }
 
     /**
-     * @dev execute is used when users want to trade their tokens to other tokens.
+     * @dev User requests withdraw token contains in withdrawRequests.
+     * Deposit event will be emitted to let incognito recognize and mint new p-tokens for the user.
+     * @param incognitoAddress: incognito's address that will receive minted p-tokens.
+     * @param token: ethereum's token address (eg., ETH, DAI, ...)
+     * @param amount: amount of the token in ethereum's denomination
+     * @param signData: signature of an unique data that is signed by an account which is generated from user's incognito privkey
+     * @param hash: hash of the unique data generated from client (timestamp for example)
+     */
+    function requestWithdraw(
+        string memory incognitoAddress,
+        address token,
+        uint amount,
+        bytes memory signData,
+        bytes32 hash
+    ) public {
+        require(!isSigDataUsed(hash));
+        address verifier = sigToAddress(signData, hash);
+        require(withdrawRequests[verifier][token] >= amount);
+
+        // convert denomination from ethereum's to incognito's (pcoin)
+        uint emitAmount = amount;
+        if (token == ETH_TOKEN) {
+            emitAmount = amount / (10 ** 9);
+        } else {
+            uint8 decimals = getDecimals(token);
+            if (decimals > 9) {
+                emitAmount = amount / (10 ** (uint(decimals) - 9));
+            }
+        }
+        // mark data hash of sig as used
+        sigDataUsed[hash] = true;
+
+        withdrawRequests[verifier][token] -= amount;
+        totalDepositedToSCAmount[token] -= amount;
+        emit Deposit(token, incognitoAddress, emitAmount);
+    }
+
+    /**
+     * @dev execute is a general function that plays a role as proxy to interact to other smart contracts.
+     * @param token: ethereum's token address (eg., ETH, DAI, ...)
+     * @param amount: amount of the token in ethereum's denomination
      * @param recipientToken: received token address.
-     * @param exchangeAddress: exchange address that execute trade process.
-     * @param callData: encoded with signature and params of trade function.
-     * @param hash:
-     * @param signData:
+     * @param exchangeAddress: address of targeting smart contract that actually executes the desired logics like trade, invest, borrow and so on.
+     * @param callData: encoded with signature and params of function from targeting smart contract.
+     * @param hash: hash of the unique data generated from client (timestamp for example)
+     * @param signData: signature of an unique data that is signed by an account which is generated from user's incognito privkey
      */
     function execute(
         address token,
@@ -406,10 +425,14 @@ contract IncognitoMode is AdminPausable {
         bytes32 hash,
         bytes memory signData
     ) public payable {
+        require(!isSigDataUsed(hash));
         address verifier = sigToAddress(signData, hash);
-        
+
         require(withdrawRequests[verifier][token] >= amount);
         require(token != recipientToken);
+
+        // mark data hash of sig as used
+        sigDataUsed[hash] = true;
 
         // define number of eth spent for forwarder.
         uint ethAmount = msg.value;
@@ -421,14 +444,16 @@ contract IncognitoMode is AdminPausable {
             require(ERC20(token).transfer(exchangeAddress, amount));
         }
 
-        trade(recipientToken, ethAmount, callData, exchangeAddress);
+        uint returnedAmount = callExtFunc(recipientToken, ethAmount, callData, exchangeAddress);
 
         // update withdrawRequests
         withdrawRequests[verifier][token] -= amount;
-        withdrawRequests[verifier][recipientToken] += amount;
+        withdrawRequests[verifier][recipientToken] += returnedAmount;
+        totalDepositedToSCAmount[token] -= amount;
+        totalDepositedToSCAmount[recipientToken] += returnedAmount;
     }
-    
-    function trade(address recipientToken, uint ethAmount, bytes memory callData, address exchangeAddress) internal {
+
+    function callExtFunc(address recipientToken, uint ethAmount, bytes memory callData, address exchangeAddress) internal returns (uint) {
          // get balance of recipient token before trade to compare after trade.
         uint balanceBeforeTrade = balanceOf(recipientToken);
         if (recipientToken == ETH_TOKEN) {
@@ -436,18 +461,19 @@ contract IncognitoMode is AdminPausable {
         }
         require(address(this).balance >= ethAmount);
         (bool success, bytes memory result) = exchangeAddress.call.value(ethAmount)(callData);
-
         require(success);
-        (address returnedTokenAddress, uint returnedAmount) = abi.decode(result, (address, uint));
 
+        (address returnedTokenAddress, uint returnedAmount) = abi.decode(result, (address, uint));
         require(returnedTokenAddress == recipientToken && balanceOf(recipientToken) - balanceBeforeTrade == returnedAmount);
+
+        return returnedAmount;
     }
 
-    /**
-     * NOTE: This function is used for testing purpose only, remove/comment this function after used.
-     */
-    function setAmount(address verifier, address sellToken, uint amount) public {
-        withdrawRequests[verifier][sellToken] = amount;
+    function getDepositedBalance(
+        address token,
+        address owner
+    ) public view returns (uint) {
+        return withdrawRequests[owner][token];
     }
 
     /**
