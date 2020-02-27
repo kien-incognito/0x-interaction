@@ -1,6 +1,5 @@
 pragma solidity >= 0.5.2 <= 0.6.2;
 
-
 import './utils.sol';
 import './IERC20.sol';
 
@@ -31,6 +30,7 @@ contract CEther is CTokenInterface {
 	function mint() public payable;
 	function redeem(uint redeemTokens) external returns (uint);
 	function borrow(uint borrowAmount) external returns (uint);
+	function repayBorrow() external payable;
 }
 
 contract CErc20 is CTokenInterface {
@@ -69,7 +69,9 @@ contract Compound is TradeUtils {
 	}
 	
 	mapping(address=>mapping(address=>BorrowInfo)) public borrowers;
-	mapping(address=>mapping(address=>bool)) public hasBorrow;
+	mapping(address=>mapping(address=>bool)) public hasBorrowed;
+	
+	mapping(address=>mapping(address=>uint)) public investors;
 
 	// fallback function which allows transfer eth.
     function() external payable {}
@@ -108,7 +110,7 @@ contract Compound is TradeUtils {
 	 * @param borrowedToken: token address that borrower wants to borrow.
 	 * @param borrowedAmount: token's amount that borrower wants to borrow.
 	 */
-	function borrow(address borrower, address collateralToken, uint srcAmount, address borrowedToken, uint borrowedAmount) public payable isIncognitoSmartContract returns (uint, address) {
+	function borrow(address borrower, address collateralToken, uint srcAmount, address borrowedToken, uint borrowedAmount) external payable isIncognitoSmartContract returns (address, uint) {
 	    if (ERC20(collateralToken) == ETH_CONTRACT_ADDRESS) {
 	        // mint eth 
 	        mint();
@@ -120,25 +122,29 @@ contract Compound is TradeUtils {
     	    mint(CErc20(collateralToken), srcAmount);
 	    }
 	    // start borrow
-	    borrow(borrowedToken, borrowedAmount);
+	    borrowInternal(borrowedToken, borrowedAmount);
 	    uint amount = balanceOf(ERC20(CErc20(borrowedToken).underlying()));
 	    
 	    // store borrower address
-	    if (hasBorrow[borrower][borrowedToken]) {
+	    if (hasBorrowed[borrower][borrowedToken]) {
 	        require(borrowers[borrower][borrowedToken].collateralToken == collateralToken);
 	        borrowers[borrower][borrowedToken].borrowedAmount += amount;
 	        borrowers[borrower][borrowedToken].collateralAmount += srcAmount;
 	    } else {
 	        borrowers[borrower][borrowedToken] = BorrowInfo(srcAmount, amount, collateralToken);
-	        hasBorrow[borrower][borrowedToken] = true;
+	        hasBorrowed[borrower][borrowedToken] = true;
 	    }
 	    
 	    // transfer token to incognito smart contract
 		ERC20(CErc20(borrowedToken).underlying()).transfer(incognitoSmartContract, amount);
-	    return (borrowedAmount, borrowedToken);
+
+		if (ERC20(borrowedToken) == ETH_CONTRACT_ADDRESS) {
+			return (address(ETH_CONTRACT_ADDRESS), borrowedAmount);
+		}
+	    return (CErc20(borrowedToken).underlying(), borrowedAmount);
 	}
 	
-	function borrow(address cToken, uint borrowedAmount) internal {
+	function borrowInternal(address cToken, uint borrowedAmount) internal {
 	    if (ERC20(cToken) == ETH_CONTRACT_ADDRESS) {
 	        require(cEther.borrow(borrowedAmount) == 0);
 	    } else {
@@ -151,8 +157,8 @@ contract Compound is TradeUtils {
 	 * @param borrower: address of borrower
 	 * @param cToken: address of cToken that user borrows
 	 */
-	function payback(address borrower, address cToken) public payable isIncognitoSmartContract {
-	    require(hasBorrow[borrower][cToken]);
+	function payback(address borrower, address cToken) external payable isIncognitoSmartContract returns (address, uint) {
+	    require(hasBorrowed[borrower][cToken]);
 
 	    address collateralToken = borrowers[borrower][cToken].collateralToken;
 	    uint repaidAmount = borrowers[borrower][cToken].borrowedAmount;
@@ -163,29 +169,71 @@ contract Compound is TradeUtils {
 	        require(repaidAmount <= balanceOf(ERC20(CErc20(cToken).underlying())));
 	        address underlying = CErc20(cToken).underlying();
 	        ERC20(underlying).approve(cToken, repaidAmount);
-	    } else {
+	        
+	        // call repayBorrow
+	        CErc20(cToken).repayBorrow(repaidAmount);
+	    } else { 
+	        // compare msg.value with repaidAmount
+	        require(msg.value == repaidAmount);
 	        require(repaidAmount <= address(this).balance);
+	        
+	        // call repayBorrow
+	        cEther.repayBorrow.value(repaidAmount)();
 	    }
-	    
-	    // call repayBorrow
-	    CErc20(cToken).repayBorrow(repaidAmount);
 	    
 	    // redeem collateralToken
 	    uint collateralBalance = balanceOfCToken(collateralToken);
-	    redeem(collateralToken, collateralBalance-100); // TODO: specify how to calculate the fee instead of hard code 100 wei.
+	    redeemInternal(collateralToken, collateralBalance-100); // TODO: specify how to calculate the fee instead of hard code 100 wei.
 	    
 	    borrowers[borrower][cToken].borrowedAmount = 0;
 	    borrowers[borrower][cToken].collateralAmount = 0;
+
+	    if (ERC20(cToken) == ETH_CONTRACT_ADDRESS) {
+	    	return (address(ETH_CONTRACT_ADDRESS), repaidAmount);
+	    }
+	    return (CErc20(cToken).underlying(), repaidAmount);
 	}
 	
-	function redeem(address cToken, uint amount) internal {
+	/**
+	 * @dev user invests to a token
+	 * @param investor: address of investor
+	 * @param investedToken: token that is going to be invested
+	 * @param investedAmount: amount of token that is invested
+	 */
+	function invest(address investor, address investedToken, uint investedAmount) external payable isIncognitoSmartContract returns (address, uint) {
+	    if (ERC20(investedToken) == ETH_CONTRACT_ADDRESS) {
+	        require(msg.value >= 0);
+	        mint();
+	        investors[investor][investedToken] += msg.value;
+	        return (address(ETH_CONTRACT_ADDRESS), 0);
+	    } 
+        require(balanceOf(ERC20(CErc20(investedToken).underlying())) >= investedAmount);
+        mint(CErc20(investedToken), investedAmount);
+        investors[investor][investedToken] += investedAmount;
+        return (CErc20(investedToken).underlying(), 0);
+	}
+	
+	/**
+	 * @dev user redeems invested token
+	 * @param investor: address of investor
+	 * @param investedToken: token that is going to be redeemed
+	 * @param redeemedAmount: amount of token that is redeemed
+	 */
+	function redeem(address investor, address investedToken, uint redeemedAmount) external isIncognitoSmartContract returns (address, uint) {
+	    require(investors[investor][investedToken] >= redeemedAmount);
+	    investors[investor][investedToken] -= redeemedAmount;
+	    return redeemInternal(investedToken, redeemedAmount-100);
+	}
+
+	function redeemInternal(address cToken, uint amount) internal returns (address, uint) {
 	    if (ERC20(cToken) == ETH_CONTRACT_ADDRESS) {
 	        cEther.redeem(amount);
 	        incognitoSmartContract.transfer(amount);
-	    } else {
-	        CErc20(cToken).redeem(amount);
-	        ERC20(CErc20(cToken).underlying()).transfer(incognitoSmartContract, amount);
+	        return (address(ETH_CONTRACT_ADDRESS), amount);
 	    }
+        CErc20(cToken).redeem(amount);
+        ERC20(CErc20(cToken).underlying()).transfer(incognitoSmartContract, amount);
+        return (CErc20(cToken).underlying(), amount);
 	}
 	
 	/**

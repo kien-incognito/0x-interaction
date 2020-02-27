@@ -4,22 +4,22 @@
   "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"@0x/contracts-utils/contracts/src/LibBytesRichErrors.sol\":\"LibBytesRichErrors\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"@0x/contracts-utils/contracts/src/LibBytesRichErrors.sol\":{\"keccak256\":\"0xec98fecbab306abab18ccfcb83cdd1ed0b1c70e5ced2259835a2b61eae2d69d1\",\"urls\":[\"bzz-raw://50d8760f638321b242e60e5d2a819b7504486aff1712a8895ee213122535b7be\",\"dweb:/ipfs/QmThnQz9VG54woPzs14BK6jGs4T7jo38EtEMPzVXnWi6YA\"]}},\"version\":1}",
   "bytecode": "0x60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820da3bda674aac584cc181443b04d33b4198a3aeb292fd362c89a29dee15c7686064736f6c63430005100032",
   "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820da3bda674aac584cc181443b04d33b4198a3aeb292fd362c89a29dee15c7686064736f6c63430005100032",
-  "sourceMap": "606:1066:16:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
-  "deployedSourceMap": "606:1066:16:-;;;;;;;;",
+  "sourceMap": "606:1066:18:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
+  "deployedSourceMap": "606:1066:18:-;;;;;;;;",
   "source": "/*\n\n  Copyright 2019 ZeroEx Intl.\n\n  Licensed under the Apache License, Version 2.0 (the \"License\");\n  you may not use this file except in compliance with the License.\n  You may obtain a copy of the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\n  Unless required by applicable law or agreed to in writing, software\n  distributed under the License is distributed on an \"AS IS\" BASIS,\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n  See the License for the specific language governing permissions and\n  limitations under the License.\n\n*/\n\npragma solidity ^0.5.9;\n\n\nlibrary LibBytesRichErrors {\n\n    enum InvalidByteOperationErrorCodes {\n        FromLessThanOrEqualsToRequired,\n        ToLessThanOrEqualsLengthRequired,\n        LengthGreaterThanZeroRequired,\n        LengthGreaterThanOrEqualsFourRequired,\n        LengthGreaterThanOrEqualsTwentyRequired,\n        LengthGreaterThanOrEqualsThirtyTwoRequired,\n        LengthGreaterThanOrEqualsNestedBytesLengthRequired,\n        DestinationLengthGreaterThanOrEqualSourceLengthRequired\n    }\n\n    // bytes4(keccak256(\"InvalidByteOperationError(uint8,uint256,uint256)\"))\n    bytes4 internal constant INVALID_BYTE_OPERATION_ERROR_SELECTOR =\n        0x28006595;\n\n    // solhint-disable func-name-mixedcase\n    function InvalidByteOperationError(\n        InvalidByteOperationErrorCodes errorCode,\n        uint256 offset,\n        uint256 required\n    )\n        internal\n        pure\n        returns (bytes memory)\n    {\n        return abi.encodeWithSelector(\n            INVALID_BYTE_OPERATION_ERROR_SELECTOR,\n            errorCode,\n            offset,\n            required\n        );\n    }\n}\n",
   "sourcePath": "@0x/contracts-utils/contracts/src/LibBytesRichErrors.sol",
   "ast": {
     "absolutePath": "@0x/contracts-utils/contracts/src/LibBytesRichErrors.sol",
     "exportedSymbols": {
       "LibBytesRichErrors": [
-        5020
+        7571
       ]
     },
-    "id": 5021,
+    "id": 7572,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4987,
+        "id": 7538,
         "literals": [
           "solidity",
           "^",
@@ -27,7 +27,7 @@
           ".9"
         ],
         "nodeType": "PragmaDirective",
-        "src": "580:23:16"
+        "src": "580:23:18"
       },
       {
         "baseContracts": [],
@@ -35,77 +35,77 @@
         "contractKind": "library",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 5020,
+        "id": 7571,
         "linearizedBaseContracts": [
-          5020
+          7571
         ],
         "name": "LibBytesRichErrors",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "canonicalName": "LibBytesRichErrors.InvalidByteOperationErrorCodes",
-            "id": 4996,
+            "id": 7547,
             "members": [
               {
-                "id": 4988,
+                "id": 7539,
                 "name": "FromLessThanOrEqualsToRequired",
                 "nodeType": "EnumValue",
-                "src": "686:30:16"
+                "src": "686:30:18"
               },
               {
-                "id": 4989,
+                "id": 7540,
                 "name": "ToLessThanOrEqualsLengthRequired",
                 "nodeType": "EnumValue",
-                "src": "726:32:16"
+                "src": "726:32:18"
               },
               {
-                "id": 4990,
+                "id": 7541,
                 "name": "LengthGreaterThanZeroRequired",
                 "nodeType": "EnumValue",
-                "src": "768:29:16"
+                "src": "768:29:18"
               },
               {
-                "id": 4991,
+                "id": 7542,
                 "name": "LengthGreaterThanOrEqualsFourRequired",
                 "nodeType": "EnumValue",
-                "src": "807:37:16"
+                "src": "807:37:18"
               },
               {
-                "id": 4992,
+                "id": 7543,
                 "name": "LengthGreaterThanOrEqualsTwentyRequired",
                 "nodeType": "EnumValue",
-                "src": "854:39:16"
+                "src": "854:39:18"
               },
               {
-                "id": 4993,
+                "id": 7544,
                 "name": "LengthGreaterThanOrEqualsThirtyTwoRequired",
                 "nodeType": "EnumValue",
-                "src": "903:42:16"
+                "src": "903:42:18"
               },
               {
-                "id": 4994,
+                "id": 7545,
                 "name": "LengthGreaterThanOrEqualsNestedBytesLengthRequired",
                 "nodeType": "EnumValue",
-                "src": "955:50:16"
+                "src": "955:50:18"
               },
               {
-                "id": 4995,
+                "id": 7546,
                 "name": "DestinationLengthGreaterThanOrEqualSourceLengthRequired",
                 "nodeType": "EnumValue",
-                "src": "1015:55:16"
+                "src": "1015:55:18"
               }
             ],
             "name": "InvalidByteOperationErrorCodes",
             "nodeType": "EnumDefinition",
-            "src": "640:436:16"
+            "src": "640:436:18"
           },
           {
             "constant": true,
-            "id": 4999,
+            "id": 7550,
             "name": "INVALID_BYTE_OPERATION_ERROR_SELECTOR",
             "nodeType": "VariableDeclaration",
-            "scope": 5020,
-            "src": "1159:83:16",
+            "scope": 7571,
+            "src": "1159:83:18",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -113,10 +113,10 @@
               "typeString": "bytes4"
             },
             "typeName": {
-              "id": 4997,
+              "id": 7548,
               "name": "bytes4",
               "nodeType": "ElementaryTypeName",
-              "src": "1159:6:16",
+              "src": "1159:6:18",
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes4",
                 "typeString": "bytes4"
@@ -125,14 +125,14 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "30783238303036353935",
-              "id": 4998,
+              "id": 7549,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "1232:10:16",
+              "src": "1232:10:18",
               "subdenomination": null,
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_671114645_by_1",
@@ -144,9 +144,9 @@
           },
           {
             "body": {
-              "id": 5018,
+              "id": 7569,
               "nodeType": "Block",
-              "src": "1498:172:16",
+              "src": "1498:172:18",
               "statements": [
                 {
                   "expression": {
@@ -154,12 +154,12 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 5012,
+                        "id": 7563,
                         "name": "INVALID_BYTE_OPERATION_ERROR_SELECTOR",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4999,
-                        "src": "1551:37:16",
+                        "referencedDeclaration": 7550,
+                        "src": "1551:37:18",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes4",
                           "typeString": "bytes4"
@@ -167,25 +167,25 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 5013,
+                        "id": 7564,
                         "name": "errorCode",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5001,
-                        "src": "1602:9:16",
+                        "referencedDeclaration": 7552,
+                        "src": "1602:9:18",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$4996",
+                          "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$7547",
                           "typeString": "enum LibBytesRichErrors.InvalidByteOperationErrorCodes"
                         }
                       },
                       {
                         "argumentTypes": null,
-                        "id": 5014,
+                        "id": 7565,
                         "name": "offset",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5003,
-                        "src": "1625:6:16",
+                        "referencedDeclaration": 7554,
+                        "src": "1625:6:18",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -193,12 +193,12 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 5015,
+                        "id": 7566,
                         "name": "required",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5005,
-                        "src": "1645:8:16",
+                        "referencedDeclaration": 7556,
+                        "src": "1645:8:18",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -212,7 +212,7 @@
                           "typeString": "bytes4"
                         },
                         {
-                          "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$4996",
+                          "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$7547",
                           "typeString": "enum LibBytesRichErrors.InvalidByteOperationErrorCodes"
                         },
                         {
@@ -226,18 +226,18 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 5010,
+                        "id": 7561,
                         "name": "abi",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5334,
-                        "src": "1515:3:16",
+                        "referencedDeclaration": 7885,
+                        "src": "1515:3:18",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_abi",
                           "typeString": "abi"
                         }
                       },
-                      "id": 5011,
+                      "id": 7562,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -245,13 +245,13 @@
                       "memberName": "encodeWithSelector",
                       "nodeType": "MemberAccess",
                       "referencedDeclaration": null,
-                      "src": "1515:22:16",
+                      "src": "1515:22:18",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_abiencodewithselector_pure$_t_bytes4_$returns$_t_bytes_memory_ptr_$",
                         "typeString": "function (bytes4) pure returns (bytes memory)"
                       }
                     },
-                    "id": 5016,
+                    "id": 7567,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -259,52 +259,52 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "1515:148:16",
+                    "src": "1515:148:18",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_memory_ptr",
                       "typeString": "bytes memory"
                     }
                   },
-                  "functionReturnParameters": 5009,
-                  "id": 5017,
+                  "functionReturnParameters": 7560,
+                  "id": 7568,
                   "nodeType": "Return",
-                  "src": "1508:155:16"
+                  "src": "1508:155:18"
                 }
               ]
             },
             "documentation": null,
-            "id": 5019,
+            "id": 7570,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "InvalidByteOperationError",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 5006,
+              "id": 7557,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5001,
+                  "id": 7552,
                   "name": "errorCode",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5019,
-                  "src": "1336:40:16",
+                  "scope": 7570,
+                  "src": "1336:40:18",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$4996",
+                    "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$7547",
                     "typeString": "enum LibBytesRichErrors.InvalidByteOperationErrorCodes"
                   },
                   "typeName": {
                     "contractScope": null,
-                    "id": 5000,
+                    "id": 7551,
                     "name": "InvalidByteOperationErrorCodes",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 4996,
-                    "src": "1336:30:16",
+                    "referencedDeclaration": 7547,
+                    "src": "1336:30:18",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$4996",
+                      "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$7547",
                       "typeString": "enum LibBytesRichErrors.InvalidByteOperationErrorCodes"
                     }
                   },
@@ -313,11 +313,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 5003,
+                  "id": 7554,
                   "name": "offset",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5019,
-                  "src": "1386:14:16",
+                  "scope": 7570,
+                  "src": "1386:14:18",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -325,10 +325,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 5002,
+                    "id": 7553,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1386:7:16",
+                    "src": "1386:7:18",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -339,11 +339,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 5005,
+                  "id": 7556,
                   "name": "required",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5019,
-                  "src": "1410:16:16",
+                  "scope": 7570,
+                  "src": "1410:16:18",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -351,10 +351,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 5004,
+                    "id": 7555,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1410:7:16",
+                    "src": "1410:7:18",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -364,19 +364,19 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1326:106:16"
+              "src": "1326:106:18"
             },
             "returnParameters": {
-              "id": 5009,
+              "id": 7560,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5008,
+                  "id": 7559,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5019,
-                  "src": "1480:12:16",
+                  "scope": 7570,
+                  "src": "1480:12:18",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -384,10 +384,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 5007,
+                    "id": 7558,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1480:5:16",
+                    "src": "1480:5:18",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -397,33 +397,33 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1479:14:16"
+              "src": "1479:14:18"
             },
-            "scope": 5020,
-            "src": "1292:378:16",
+            "scope": 7571,
+            "src": "1292:378:18",
             "stateMutability": "pure",
             "superFunction": null,
             "visibility": "internal"
           }
         ],
-        "scope": 5021,
-        "src": "606:1066:16"
+        "scope": 7572,
+        "src": "606:1066:18"
       }
     ],
-    "src": "580:1093:16"
+    "src": "580:1093:18"
   },
   "legacyAST": {
     "absolutePath": "@0x/contracts-utils/contracts/src/LibBytesRichErrors.sol",
     "exportedSymbols": {
       "LibBytesRichErrors": [
-        5020
+        7571
       ]
     },
-    "id": 5021,
+    "id": 7572,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4987,
+        "id": 7538,
         "literals": [
           "solidity",
           "^",
@@ -431,7 +431,7 @@
           ".9"
         ],
         "nodeType": "PragmaDirective",
-        "src": "580:23:16"
+        "src": "580:23:18"
       },
       {
         "baseContracts": [],
@@ -439,77 +439,77 @@
         "contractKind": "library",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 5020,
+        "id": 7571,
         "linearizedBaseContracts": [
-          5020
+          7571
         ],
         "name": "LibBytesRichErrors",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "canonicalName": "LibBytesRichErrors.InvalidByteOperationErrorCodes",
-            "id": 4996,
+            "id": 7547,
             "members": [
               {
-                "id": 4988,
+                "id": 7539,
                 "name": "FromLessThanOrEqualsToRequired",
                 "nodeType": "EnumValue",
-                "src": "686:30:16"
+                "src": "686:30:18"
               },
               {
-                "id": 4989,
+                "id": 7540,
                 "name": "ToLessThanOrEqualsLengthRequired",
                 "nodeType": "EnumValue",
-                "src": "726:32:16"
+                "src": "726:32:18"
               },
               {
-                "id": 4990,
+                "id": 7541,
                 "name": "LengthGreaterThanZeroRequired",
                 "nodeType": "EnumValue",
-                "src": "768:29:16"
+                "src": "768:29:18"
               },
               {
-                "id": 4991,
+                "id": 7542,
                 "name": "LengthGreaterThanOrEqualsFourRequired",
                 "nodeType": "EnumValue",
-                "src": "807:37:16"
+                "src": "807:37:18"
               },
               {
-                "id": 4992,
+                "id": 7543,
                 "name": "LengthGreaterThanOrEqualsTwentyRequired",
                 "nodeType": "EnumValue",
-                "src": "854:39:16"
+                "src": "854:39:18"
               },
               {
-                "id": 4993,
+                "id": 7544,
                 "name": "LengthGreaterThanOrEqualsThirtyTwoRequired",
                 "nodeType": "EnumValue",
-                "src": "903:42:16"
+                "src": "903:42:18"
               },
               {
-                "id": 4994,
+                "id": 7545,
                 "name": "LengthGreaterThanOrEqualsNestedBytesLengthRequired",
                 "nodeType": "EnumValue",
-                "src": "955:50:16"
+                "src": "955:50:18"
               },
               {
-                "id": 4995,
+                "id": 7546,
                 "name": "DestinationLengthGreaterThanOrEqualSourceLengthRequired",
                 "nodeType": "EnumValue",
-                "src": "1015:55:16"
+                "src": "1015:55:18"
               }
             ],
             "name": "InvalidByteOperationErrorCodes",
             "nodeType": "EnumDefinition",
-            "src": "640:436:16"
+            "src": "640:436:18"
           },
           {
             "constant": true,
-            "id": 4999,
+            "id": 7550,
             "name": "INVALID_BYTE_OPERATION_ERROR_SELECTOR",
             "nodeType": "VariableDeclaration",
-            "scope": 5020,
-            "src": "1159:83:16",
+            "scope": 7571,
+            "src": "1159:83:18",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -517,10 +517,10 @@
               "typeString": "bytes4"
             },
             "typeName": {
-              "id": 4997,
+              "id": 7548,
               "name": "bytes4",
               "nodeType": "ElementaryTypeName",
-              "src": "1159:6:16",
+              "src": "1159:6:18",
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes4",
                 "typeString": "bytes4"
@@ -529,14 +529,14 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "30783238303036353935",
-              "id": 4998,
+              "id": 7549,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "1232:10:16",
+              "src": "1232:10:18",
               "subdenomination": null,
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_671114645_by_1",
@@ -548,9 +548,9 @@
           },
           {
             "body": {
-              "id": 5018,
+              "id": 7569,
               "nodeType": "Block",
-              "src": "1498:172:16",
+              "src": "1498:172:18",
               "statements": [
                 {
                   "expression": {
@@ -558,12 +558,12 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 5012,
+                        "id": 7563,
                         "name": "INVALID_BYTE_OPERATION_ERROR_SELECTOR",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4999,
-                        "src": "1551:37:16",
+                        "referencedDeclaration": 7550,
+                        "src": "1551:37:18",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes4",
                           "typeString": "bytes4"
@@ -571,25 +571,25 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 5013,
+                        "id": 7564,
                         "name": "errorCode",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5001,
-                        "src": "1602:9:16",
+                        "referencedDeclaration": 7552,
+                        "src": "1602:9:18",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$4996",
+                          "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$7547",
                           "typeString": "enum LibBytesRichErrors.InvalidByteOperationErrorCodes"
                         }
                       },
                       {
                         "argumentTypes": null,
-                        "id": 5014,
+                        "id": 7565,
                         "name": "offset",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5003,
-                        "src": "1625:6:16",
+                        "referencedDeclaration": 7554,
+                        "src": "1625:6:18",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -597,12 +597,12 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 5015,
+                        "id": 7566,
                         "name": "required",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5005,
-                        "src": "1645:8:16",
+                        "referencedDeclaration": 7556,
+                        "src": "1645:8:18",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -616,7 +616,7 @@
                           "typeString": "bytes4"
                         },
                         {
-                          "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$4996",
+                          "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$7547",
                           "typeString": "enum LibBytesRichErrors.InvalidByteOperationErrorCodes"
                         },
                         {
@@ -630,18 +630,18 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 5010,
+                        "id": 7561,
                         "name": "abi",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5334,
-                        "src": "1515:3:16",
+                        "referencedDeclaration": 7885,
+                        "src": "1515:3:18",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_abi",
                           "typeString": "abi"
                         }
                       },
-                      "id": 5011,
+                      "id": 7562,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -649,13 +649,13 @@
                       "memberName": "encodeWithSelector",
                       "nodeType": "MemberAccess",
                       "referencedDeclaration": null,
-                      "src": "1515:22:16",
+                      "src": "1515:22:18",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_abiencodewithselector_pure$_t_bytes4_$returns$_t_bytes_memory_ptr_$",
                         "typeString": "function (bytes4) pure returns (bytes memory)"
                       }
                     },
-                    "id": 5016,
+                    "id": 7567,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -663,52 +663,52 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "1515:148:16",
+                    "src": "1515:148:18",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_memory_ptr",
                       "typeString": "bytes memory"
                     }
                   },
-                  "functionReturnParameters": 5009,
-                  "id": 5017,
+                  "functionReturnParameters": 7560,
+                  "id": 7568,
                   "nodeType": "Return",
-                  "src": "1508:155:16"
+                  "src": "1508:155:18"
                 }
               ]
             },
             "documentation": null,
-            "id": 5019,
+            "id": 7570,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "InvalidByteOperationError",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 5006,
+              "id": 7557,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5001,
+                  "id": 7552,
                   "name": "errorCode",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5019,
-                  "src": "1336:40:16",
+                  "scope": 7570,
+                  "src": "1336:40:18",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$4996",
+                    "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$7547",
                     "typeString": "enum LibBytesRichErrors.InvalidByteOperationErrorCodes"
                   },
                   "typeName": {
                     "contractScope": null,
-                    "id": 5000,
+                    "id": 7551,
                     "name": "InvalidByteOperationErrorCodes",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 4996,
-                    "src": "1336:30:16",
+                    "referencedDeclaration": 7547,
+                    "src": "1336:30:18",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$4996",
+                      "typeIdentifier": "t_enum$_InvalidByteOperationErrorCodes_$7547",
                       "typeString": "enum LibBytesRichErrors.InvalidByteOperationErrorCodes"
                     }
                   },
@@ -717,11 +717,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 5003,
+                  "id": 7554,
                   "name": "offset",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5019,
-                  "src": "1386:14:16",
+                  "scope": 7570,
+                  "src": "1386:14:18",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -729,10 +729,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 5002,
+                    "id": 7553,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1386:7:16",
+                    "src": "1386:7:18",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -743,11 +743,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 5005,
+                  "id": 7556,
                   "name": "required",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5019,
-                  "src": "1410:16:16",
+                  "scope": 7570,
+                  "src": "1410:16:18",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -755,10 +755,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 5004,
+                    "id": 7555,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1410:7:16",
+                    "src": "1410:7:18",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -768,19 +768,19 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1326:106:16"
+              "src": "1326:106:18"
             },
             "returnParameters": {
-              "id": 5009,
+              "id": 7560,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5008,
+                  "id": 7559,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5019,
-                  "src": "1480:12:16",
+                  "scope": 7570,
+                  "src": "1480:12:18",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -788,10 +788,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 5007,
+                    "id": 7558,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1480:5:16",
+                    "src": "1480:5:18",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -801,20 +801,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1479:14:16"
+              "src": "1479:14:18"
             },
-            "scope": 5020,
-            "src": "1292:378:16",
+            "scope": 7571,
+            "src": "1292:378:18",
             "stateMutability": "pure",
             "superFunction": null,
             "visibility": "internal"
           }
         ],
-        "scope": 5021,
-        "src": "606:1066:16"
+        "scope": 7572,
+        "src": "606:1066:18"
       }
     ],
-    "src": "580:1093:16"
+    "src": "580:1093:18"
   },
   "compiler": {
     "name": "solc",
@@ -822,7 +822,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-02-19T06:30:20.888Z",
+  "updatedAt": "2020-02-27T06:07:50.540Z",
   "devdoc": {
     "methods": {}
   },

@@ -20,17 +20,23 @@ const VERIFIER = "0x0858434298202ce0d76dbE20Ef5DA035CDEFc664";
 const SIG = Buffer.from("53550cb7de64582b075cb387ebb3cc6391f0e98f63236d869a628b2ca1541e4e1f3d2a6d88a088f48a9e5d4d14eba6bb4c2bbbbe62e6d95958d51c97daf193f500", "hex");
 const HASH = Buffer.from("6921b72d23cc590aba33512a55b1c3c84da1c03e6d8a588b9a1975a5470dbe13", "hex");
 const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
-const DAI_ADDRESS = "0x6b175474e89094c44da98b954eedeac495271d0f";
 const KNC_ADDRESS = "0xdd974d5c2e2928dea5f71b9825b8b646686bd200";
 const SAI_ADDRESS = "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359";
 const ABT_ADDRESS = "0xb98d4c97425d9908e66e53a6fdf673acca0be986";
-const INCOGNITO_MODE = "./IncognitoMode.sol";
+const INCOGNITO_MODE = "./IncognitoModeMock.sol";
 const INCOGNITO_PROXY = "./IncognitoProxy.sol";
 const KBN_TRADE = "./KBNTrade.sol";
 const ZRX_TRADE = "./ZRXTrade.sol";
 const EXECUTOR = "./Executor.sol";
 const ERC20 = "./ERC20.sol";
+const COMPOUND = "./Compound.sol";
 const TRADE_FUNC = "trade";
+const BORROW_FUNC = "borrow";
+const PAYBACK_FUNC = "payback";
+const COMP_CONTROLLER = "0x2eaa9d77ae4d8f9cdd9faacd44016e746485bddb";
+const COMPOUND_ETH_ADDRESS = "0xd6801a1dffcd0a410336ef88def4320d6df1883e";
+const COMPOUND_DAI_ADDRESS = "0x6d7f0754ffeb405d23c51ce938289d4835be3b14";
+const DAI_ADDRESS = "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa";
 
 options = {
     working_dir: './',
@@ -60,6 +66,8 @@ let KBNTrade = resolver.require(KBN_TRADE);
 let ZRXTrade = resolver.require(ZRX_TRADE);
 let Executor = resolver.require(EXECUTOR);
 let Erc20 = resolver.require(ERC20);
+let Compound = resolver.require(COMPOUND);
+
 
 IncognitoProxy.setProvider(options.provider());
 IncognitoMode.setProvider(options.provider());
@@ -67,6 +75,7 @@ KBNTrade.setProvider(options.provider());
 ZRXTrade.setProvider(options.provider());
 Executor.setProvider(options.provider());
 Erc20.setProvider(options.provider());
+Compound.setProvider(options.provider());
 
 async function deploy() {
 	// deploy smart contract
@@ -78,13 +87,17 @@ async function deploy() {
 	console.log(`IncognitoMode address=${rs.address} txHash=${rs.transactionHash}`);
 	cached.incognitoMode = rs.address;
 
-	rs = await KBNTrade.new(process.env.KYBERNETWORK, cached.incognitoMode, {from: account.address});
-	console.log(`KBNTrade address=${rs.address} txHash=${rs.transactionHash}`);
-	cached.KBN = rs.address;
+	// rs = await KBNTrade.new(process.env.KYBERNETWORK, cached.incognitoMode, {from: account.address});
+	// console.log(`KBNTrade address=${rs.address} txHash=${rs.transactionHash}`);
+	// cached.KBN = rs.address;
 
-	rs = await ZRXTrade.new(process.env.WETH, contractAddresses.getContractAddressesForChainOrThrow(1).erc20Proxy, cached.incognitoMode, {from: account.address});
-	console.log(`ZRXTrade address=${rs.address} txHash=${rs.transactionHash}`);
-	cached.ZRX = rs.address;
+	// rs = await ZRXTrade.new(process.env.WETH, contractAddresses.getContractAddressesForChainOrThrow(1).erc20Proxy, cached.incognitoMode, {from: account.address});
+	// console.log(`ZRXTrade address=${rs.address} txHash=${rs.transactionHash}`);
+	// cached.ZRX = rs.address;
+
+	rs = await Compound.new(cached.incognitoMode, COMP_CONTROLLER, COMPOUND_ETH_ADDRESS, {from: account.address});
+	console.log(`Compound address=${rs.address} txHash=${rs.transactionHash}`);
+	cached.Compound = rs.address;
 }
 
 function IncognitoModeContract() {
@@ -100,8 +113,20 @@ function ExecutorContract() {
 }
 
 function findTradeFunctionAbi(abi) {
+	return findFunctionAbi(abi, TRADE_FUNC);
+}
+
+function findBorrowFunctionAbi(abi) {
+	return findFunctionAbi(abi, BORROW_FUNC);
+}
+
+function findPaybackFunctionAbi(abi) {
+	return findFunctionAbi(abi, PAYBACK_FUNC);
+}
+
+function findFunctionAbi(abi, funcName) {
 	for (let i=0; abi.length; i++) {
-		if (abi[i].name === TRADE_FUNC) {
+		if (abi[i].name === funcName) {
 			return abi[i];
 		}
 	}
@@ -118,6 +143,46 @@ async function deposit(amount) {
 async function quote(options) {
 	let rs = await fetch(`https://api.0x.org/swap/v0/quote?${qs.stringify(options)}`);
 	return await rs.json();
+}
+
+async function borrowOrPay(funcName, srcToken, destCToken, destToken, srcQty, destQty) {
+	let abi = findFunctionAbi(Compound.abi, funcName);
+	let params = [];
+	if (funcName === BORROW_FUNC) {
+		params = [VERIFIER, srcToken, srcQty, destCToken, destQty];
+	} else if (funcName === PAYBACK_FUNC) {
+		params = [VERIFIER, destCToken];
+	}
+	let inputData = web3.eth.abi.encodeFunctionCall(abi, params);
+	let rs;
+	if (srcToken === EMPTY_ADDRESS) {
+		rs = await deposit(srcQty);
+		console.log(`finish deposit ${srcQty} (wei) txHash=${rs.transactionHash}`);
+	} else {
+		// TBD.
+	}
+
+	// setAmount
+	rs = await setAmount(srcToken, srcQty);
+	console.log(`finish setAmount to token=${srcToken} amount=${srcQty} tx=${rs.transactionHash}`);
+
+	rs = await IncognitoModeContract().methods.execute(
+		srcToken, 
+		srcQty, 
+		destToken, 
+		cached.Compound, 
+		Buffer.from(inputData.slice(2, inputData.length), "hex"),
+		HASH,
+		SIG
+	).send({from: account.address});
+
+	console.log(`finish calling execute function at tx=${rs.transactionHash}`);
+	console.log(rs);
+
+	if (destToken === EMPTY_ADDRESS) {
+		return await web3.eth.getBalance(cached.incognitoMode);
+	}
+	return balanceOf(destToken);
 }
 
 async function trade(_type, srcTokenName, srcToken, srcQty, destTokenName, destToken) {
@@ -254,6 +319,31 @@ switch (command) {
 			console.log(rs);
 		});
 		break;
+	case "compound":
+		console.log(arg);
+		let func = async function() {
+			await deploy();
+			let balance = await borrowOrPay(BORROW_FUNC, EMPTY_ADDRESS, COMPOUND_DAI_ADDRESS, DAI_ADDRESS, "100000000000000000", "10000000000000000000");
+			console.log(`balance of DAI after borrow is ${balance}`);
+
+			balance = await borrowOrPay(PAYBACK_FUNC, DAI_ADDRESS, EMPTY_ADDRESS, EMPTY_ADDRESS, "10000000000000000000", "100000000000000000");
+			console.log(`balance of ETH after payback is ${balance}`);
+		}
+		func().then(function() {
+			console.log("done");
+		});
+		break;
+	case "compile":
+		let file = process.argv[3];
+		console.log(`compiling filePath=${file}`);
+		let contract = require(file);
+		fs.writeFile("abi.json", JSON.stringify(contract.abi), "utf8", function() {
+            console.log("Saved abi.json");
+        });
+        fs.writeFile("bc", contract.bytecode, "utf8", function() {
+            console.log("Saved bc");
+        });
+        break;
 	default:
 		let mode = process.argv[2]; // 0x or KBN
 		let flow = async function() {

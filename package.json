@@ -12,6 +12,8 @@
     "setAmount": "node index.js setAmount",
     "deposit": "node index.js deposit",
     "trade": "node index.js trade",
+    "compound": "node index.js compound",
+    "compile": "truffle compile --all && node index.js compile",
     "all": "node index.js"
   },
   "author": "",

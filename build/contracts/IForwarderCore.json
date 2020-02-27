@@ -244,14 +244,14 @@
     "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IForwarderCore.sol",
     "exportedSymbols": {
       "IForwarderCore": [
-        3372
+        5923
       ]
     },
-    "id": 3373,
+    "id": 5924,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 3328,
+        "id": 5879,
         "literals": [
           "solidity",
           "^",
@@ -259,36 +259,36 @@
           ".9"
         ],
         "nodeType": "PragmaDirective",
-        "src": "580:23:10"
+        "src": "580:23:12"
       },
       {
-        "id": 3329,
+        "id": 5880,
         "literals": [
           "experimental",
           "ABIEncoderV2"
         ],
         "nodeType": "PragmaDirective",
-        "src": "604:33:10"
+        "src": "604:33:12"
       },
       {
         "absolutePath": "@0x/contracts-exchange-libs/contracts/src/LibOrder.sol",
         "file": "@0x/contracts-exchange-libs/contracts/src/LibOrder.sol",
-        "id": 3330,
+        "id": 5881,
         "nodeType": "ImportDirective",
-        "scope": 3373,
-        "sourceUnit": 4485,
-        "src": "639:64:10",
+        "scope": 5924,
+        "sourceUnit": 7036,
+        "src": "639:64:12",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
         "absolutePath": "@0x/contracts-exchange-libs/contracts/src/LibFillResults.sol",
         "file": "@0x/contracts-exchange-libs/contracts/src/LibFillResults.sol",
-        "id": 3331,
+        "id": 5882,
         "nodeType": "ImportDirective",
-        "scope": 3373,
-        "sourceUnit": 4059,
-        "src": "704:70:10",
+        "scope": 5924,
+        "sourceUnit": 6610,
+        "src": "704:70:12",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -298,9 +298,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 3372,
+        "id": 5923,
         "linearizedBaseContracts": [
-          3372
+          5923
         ],
         "name": "IForwarderCore",
         "nodeType": "ContractDefinition",
@@ -308,48 +308,48 @@
           {
             "body": null,
             "documentation": "@dev Purchases as much of orders' makerAssets as possible by selling as much of the ETH value sent\n      as possible, accounting for order and forwarder fees.\n @param orders Array of order specifications used containing desired makerAsset and WETH as takerAsset.\n @param signatures Proofs that orders have been created by makers.\n @param ethFeeAmounts Amounts of ETH, denominated in Wei, that are paid to corresponding feeRecipients.\n @param feeRecipients Addresses that will receive ETH when orders are filled.\n @return wethSpentAmount Amount of WETH spent on the given set of orders.\n @return makerAssetAcquiredAmount Amount of maker asset acquired from the given set of orders.",
-            "id": 3350,
+            "id": 5901,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "marketSellOrdersWithEth",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 3344,
+              "id": 5895,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3334,
+                  "id": 5885,
                   "name": "orders",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1588:30:10",
+                  "scope": 5901,
+                  "src": "1588:30:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_array$_t_struct$_Order_$4419_memory_$dyn_memory_ptr",
+                    "typeIdentifier": "t_array$_t_struct$_Order_$6970_memory_$dyn_memory_ptr",
                     "typeString": "struct LibOrder.Order[]"
                   },
                   "typeName": {
                     "baseType": {
                       "contractScope": null,
-                      "id": 3332,
+                      "id": 5883,
                       "name": "LibOrder.Order",
                       "nodeType": "UserDefinedTypeName",
-                      "referencedDeclaration": 4419,
-                      "src": "1588:14:10",
+                      "referencedDeclaration": 6970,
+                      "src": "1588:14:12",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Order_$4419_storage_ptr",
+                        "typeIdentifier": "t_struct$_Order_$6970_storage_ptr",
                         "typeString": "struct LibOrder.Order"
                       }
                     },
-                    "id": 3333,
+                    "id": 5884,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1588:16:10",
+                    "src": "1588:16:12",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_Order_$4419_storage_$dyn_storage_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_Order_$6970_storage_$dyn_storage_ptr",
                       "typeString": "struct LibOrder.Order[]"
                     }
                   },
@@ -358,11 +358,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3337,
+                  "id": 5888,
                   "name": "signatures",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1628:25:10",
+                  "scope": 5901,
+                  "src": "1628:25:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -371,19 +371,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3335,
+                      "id": 5886,
                       "name": "bytes",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1628:5:10",
+                      "src": "1628:5:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes_storage_ptr",
                         "typeString": "bytes"
                       }
                     },
-                    "id": 3336,
+                    "id": 5887,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1628:7:10",
+                    "src": "1628:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
                       "typeString": "bytes[]"
@@ -394,11 +394,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3340,
+                  "id": 5891,
                   "name": "ethFeeAmounts",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1663:30:10",
+                  "scope": 5901,
+                  "src": "1663:30:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -407,19 +407,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3338,
+                      "id": 5889,
                       "name": "uint256",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1663:7:10",
+                      "src": "1663:7:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "id": 3339,
+                    "id": 5890,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1663:9:10",
+                    "src": "1663:9:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -430,11 +430,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3343,
+                  "id": 5894,
                   "name": "feeRecipients",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1703:38:10",
+                  "scope": 5901,
+                  "src": "1703:38:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -443,20 +443,20 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3341,
+                      "id": 5892,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1703:15:10",
+                      "src": "1703:15:12",
                       "stateMutability": "payable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address_payable",
                         "typeString": "address payable"
                       }
                     },
-                    "id": 3342,
+                    "id": 5893,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1703:17:10",
+                    "src": "1703:17:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_payable_$dyn_storage_ptr",
                       "typeString": "address payable[]"
@@ -466,19 +466,19 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1578:169:10"
+              "src": "1578:169:12"
             },
             "returnParameters": {
-              "id": 3349,
+              "id": 5900,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3346,
+                  "id": 5897,
                   "name": "wethSpentAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1809:23:10",
+                  "scope": 5901,
+                  "src": "1809:23:12",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -486,10 +486,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3345,
+                    "id": 5896,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1809:7:10",
+                    "src": "1809:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -500,11 +500,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3348,
+                  "id": 5899,
                   "name": "makerAssetAcquiredAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1846:32:10",
+                  "scope": 5901,
+                  "src": "1846:32:12",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -512,10 +512,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3347,
+                    "id": 5898,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1846:7:10",
+                    "src": "1846:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -525,10 +525,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1795:93:10"
+              "src": "1795:93:12"
             },
-            "scope": 3372,
-            "src": "1546:343:10",
+            "scope": 5923,
+            "src": "1546:343:12",
             "stateMutability": "payable",
             "superFunction": null,
             "visibility": "public"
@@ -536,48 +536,48 @@
           {
             "body": null,
             "documentation": "@dev Attempt to buy makerAssetBuyAmount of makerAsset by selling ETH provided with transaction.\n      The Forwarder may *fill* more than makerAssetBuyAmount of the makerAsset so that it can\n      pay takerFees where takerFeeAssetData == makerAssetData (i.e. percentage fees).\n      Any ETH not spent will be refunded to sender.\n @param orders Array of order specifications used containing desired makerAsset and WETH as takerAsset.\n @param makerAssetBuyAmount Desired amount of makerAsset to purchase.\n @param signatures Proofs that orders have been created by makers.\n @param ethFeeAmounts Amounts of ETH, denominated in Wei, that are paid to corresponding feeRecipients.\n @param feeRecipients Addresses that will receive ETH when orders are filled.\n @return wethSpentAmount Amount of WETH spent on the given set of orders.\n @return makerAssetAcquiredAmount Amount of maker asset acquired from the given set of orders.",
-            "id": 3371,
+            "id": 5922,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "marketBuyOrdersWithEth",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 3365,
+              "id": 5916,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3353,
+                  "id": 5904,
                   "name": "orders",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "2934:30:10",
+                  "scope": 5922,
+                  "src": "2934:30:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_array$_t_struct$_Order_$4419_memory_$dyn_memory_ptr",
+                    "typeIdentifier": "t_array$_t_struct$_Order_$6970_memory_$dyn_memory_ptr",
                     "typeString": "struct LibOrder.Order[]"
                   },
                   "typeName": {
                     "baseType": {
                       "contractScope": null,
-                      "id": 3351,
+                      "id": 5902,
                       "name": "LibOrder.Order",
                       "nodeType": "UserDefinedTypeName",
-                      "referencedDeclaration": 4419,
-                      "src": "2934:14:10",
+                      "referencedDeclaration": 6970,
+                      "src": "2934:14:12",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Order_$4419_storage_ptr",
+                        "typeIdentifier": "t_struct$_Order_$6970_storage_ptr",
                         "typeString": "struct LibOrder.Order"
                       }
                     },
-                    "id": 3352,
+                    "id": 5903,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "2934:16:10",
+                    "src": "2934:16:12",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_Order_$4419_storage_$dyn_storage_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_Order_$6970_storage_$dyn_storage_ptr",
                       "typeString": "struct LibOrder.Order[]"
                     }
                   },
@@ -586,11 +586,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3355,
+                  "id": 5906,
                   "name": "makerAssetBuyAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "2974:27:10",
+                  "scope": 5922,
+                  "src": "2974:27:12",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -598,10 +598,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3354,
+                    "id": 5905,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2974:7:10",
+                    "src": "2974:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -612,11 +612,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3358,
+                  "id": 5909,
                   "name": "signatures",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "3011:25:10",
+                  "scope": 5922,
+                  "src": "3011:25:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -625,19 +625,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3356,
+                      "id": 5907,
                       "name": "bytes",
                       "nodeType": "ElementaryTypeName",
-                      "src": "3011:5:10",
+                      "src": "3011:5:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes_storage_ptr",
                         "typeString": "bytes"
                       }
                     },
-                    "id": 3357,
+                    "id": 5908,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "3011:7:10",
+                    "src": "3011:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
                       "typeString": "bytes[]"
@@ -648,11 +648,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3361,
+                  "id": 5912,
                   "name": "ethFeeAmounts",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "3046:30:10",
+                  "scope": 5922,
+                  "src": "3046:30:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -661,19 +661,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3359,
+                      "id": 5910,
                       "name": "uint256",
                       "nodeType": "ElementaryTypeName",
-                      "src": "3046:7:10",
+                      "src": "3046:7:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "id": 3360,
+                    "id": 5911,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "3046:9:10",
+                    "src": "3046:9:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -684,11 +684,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3364,
+                  "id": 5915,
                   "name": "feeRecipients",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "3086:38:10",
+                  "scope": 5922,
+                  "src": "3086:38:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -697,20 +697,20 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3362,
+                      "id": 5913,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "3086:15:10",
+                      "src": "3086:15:12",
                       "stateMutability": "payable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address_payable",
                         "typeString": "address payable"
                       }
                     },
-                    "id": 3363,
+                    "id": 5914,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "3086:17:10",
+                    "src": "3086:17:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_payable_$dyn_storage_ptr",
                       "typeString": "address payable[]"
@@ -720,19 +720,19 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2924:206:10"
+              "src": "2924:206:12"
             },
             "returnParameters": {
-              "id": 3370,
+              "id": 5921,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3367,
+                  "id": 5918,
                   "name": "wethSpentAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "3192:23:10",
+                  "scope": 5922,
+                  "src": "3192:23:12",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -740,10 +740,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3366,
+                    "id": 5917,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3192:7:10",
+                    "src": "3192:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -754,11 +754,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3369,
+                  "id": 5920,
                   "name": "makerAssetAcquiredAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "3229:32:10",
+                  "scope": 5922,
+                  "src": "3229:32:12",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -766,10 +766,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3368,
+                    "id": 5919,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3229:7:10",
+                    "src": "3229:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -779,33 +779,33 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3178:93:10"
+              "src": "3178:93:12"
             },
-            "scope": 3372,
-            "src": "2893:379:10",
+            "scope": 5923,
+            "src": "2893:379:12",
             "stateMutability": "payable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 3373,
-        "src": "777:2497:10"
+        "scope": 5924,
+        "src": "777:2497:12"
       }
     ],
-    "src": "580:2695:10"
+    "src": "580:2695:12"
   },
   "legacyAST": {
     "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IForwarderCore.sol",
     "exportedSymbols": {
       "IForwarderCore": [
-        3372
+        5923
       ]
     },
-    "id": 3373,
+    "id": 5924,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 3328,
+        "id": 5879,
         "literals": [
           "solidity",
           "^",
@@ -813,36 +813,36 @@
           ".9"
         ],
         "nodeType": "PragmaDirective",
-        "src": "580:23:10"
+        "src": "580:23:12"
       },
       {
-        "id": 3329,
+        "id": 5880,
         "literals": [
           "experimental",
           "ABIEncoderV2"
         ],
         "nodeType": "PragmaDirective",
-        "src": "604:33:10"
+        "src": "604:33:12"
       },
       {
         "absolutePath": "@0x/contracts-exchange-libs/contracts/src/LibOrder.sol",
         "file": "@0x/contracts-exchange-libs/contracts/src/LibOrder.sol",
-        "id": 3330,
+        "id": 5881,
         "nodeType": "ImportDirective",
-        "scope": 3373,
-        "sourceUnit": 4485,
-        "src": "639:64:10",
+        "scope": 5924,
+        "sourceUnit": 7036,
+        "src": "639:64:12",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
         "absolutePath": "@0x/contracts-exchange-libs/contracts/src/LibFillResults.sol",
         "file": "@0x/contracts-exchange-libs/contracts/src/LibFillResults.sol",
-        "id": 3331,
+        "id": 5882,
         "nodeType": "ImportDirective",
-        "scope": 3373,
-        "sourceUnit": 4059,
-        "src": "704:70:10",
+        "scope": 5924,
+        "sourceUnit": 6610,
+        "src": "704:70:12",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -852,9 +852,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 3372,
+        "id": 5923,
         "linearizedBaseContracts": [
-          3372
+          5923
         ],
         "name": "IForwarderCore",
         "nodeType": "ContractDefinition",
@@ -862,48 +862,48 @@
           {
             "body": null,
             "documentation": "@dev Purchases as much of orders' makerAssets as possible by selling as much of the ETH value sent\n      as possible, accounting for order and forwarder fees.\n @param orders Array of order specifications used containing desired makerAsset and WETH as takerAsset.\n @param signatures Proofs that orders have been created by makers.\n @param ethFeeAmounts Amounts of ETH, denominated in Wei, that are paid to corresponding feeRecipients.\n @param feeRecipients Addresses that will receive ETH when orders are filled.\n @return wethSpentAmount Amount of WETH spent on the given set of orders.\n @return makerAssetAcquiredAmount Amount of maker asset acquired from the given set of orders.",
-            "id": 3350,
+            "id": 5901,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "marketSellOrdersWithEth",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 3344,
+              "id": 5895,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3334,
+                  "id": 5885,
                   "name": "orders",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1588:30:10",
+                  "scope": 5901,
+                  "src": "1588:30:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_array$_t_struct$_Order_$4419_memory_$dyn_memory_ptr",
+                    "typeIdentifier": "t_array$_t_struct$_Order_$6970_memory_$dyn_memory_ptr",
                     "typeString": "struct LibOrder.Order[]"
                   },
                   "typeName": {
                     "baseType": {
                       "contractScope": null,
-                      "id": 3332,
+                      "id": 5883,
                       "name": "LibOrder.Order",
                       "nodeType": "UserDefinedTypeName",
-                      "referencedDeclaration": 4419,
-                      "src": "1588:14:10",
+                      "referencedDeclaration": 6970,
+                      "src": "1588:14:12",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Order_$4419_storage_ptr",
+                        "typeIdentifier": "t_struct$_Order_$6970_storage_ptr",
                         "typeString": "struct LibOrder.Order"
                       }
                     },
-                    "id": 3333,
+                    "id": 5884,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1588:16:10",
+                    "src": "1588:16:12",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_Order_$4419_storage_$dyn_storage_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_Order_$6970_storage_$dyn_storage_ptr",
                       "typeString": "struct LibOrder.Order[]"
                     }
                   },
@@ -912,11 +912,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3337,
+                  "id": 5888,
                   "name": "signatures",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1628:25:10",
+                  "scope": 5901,
+                  "src": "1628:25:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -925,19 +925,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3335,
+                      "id": 5886,
                       "name": "bytes",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1628:5:10",
+                      "src": "1628:5:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes_storage_ptr",
                         "typeString": "bytes"
                       }
                     },
-                    "id": 3336,
+                    "id": 5887,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1628:7:10",
+                    "src": "1628:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
                       "typeString": "bytes[]"
@@ -948,11 +948,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3340,
+                  "id": 5891,
                   "name": "ethFeeAmounts",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1663:30:10",
+                  "scope": 5901,
+                  "src": "1663:30:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -961,19 +961,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3338,
+                      "id": 5889,
                       "name": "uint256",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1663:7:10",
+                      "src": "1663:7:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "id": 3339,
+                    "id": 5890,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1663:9:10",
+                    "src": "1663:9:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -984,11 +984,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3343,
+                  "id": 5894,
                   "name": "feeRecipients",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1703:38:10",
+                  "scope": 5901,
+                  "src": "1703:38:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -997,20 +997,20 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3341,
+                      "id": 5892,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1703:15:10",
+                      "src": "1703:15:12",
                       "stateMutability": "payable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address_payable",
                         "typeString": "address payable"
                       }
                     },
-                    "id": 3342,
+                    "id": 5893,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1703:17:10",
+                    "src": "1703:17:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_payable_$dyn_storage_ptr",
                       "typeString": "address payable[]"
@@ -1020,19 +1020,19 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1578:169:10"
+              "src": "1578:169:12"
             },
             "returnParameters": {
-              "id": 3349,
+              "id": 5900,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3346,
+                  "id": 5897,
                   "name": "wethSpentAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1809:23:10",
+                  "scope": 5901,
+                  "src": "1809:23:12",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1040,10 +1040,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3345,
+                    "id": 5896,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1809:7:10",
+                    "src": "1809:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1054,11 +1054,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3348,
+                  "id": 5899,
                   "name": "makerAssetAcquiredAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3350,
-                  "src": "1846:32:10",
+                  "scope": 5901,
+                  "src": "1846:32:12",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1066,10 +1066,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3347,
+                    "id": 5898,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1846:7:10",
+                    "src": "1846:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1079,10 +1079,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1795:93:10"
+              "src": "1795:93:12"
             },
-            "scope": 3372,
-            "src": "1546:343:10",
+            "scope": 5923,
+            "src": "1546:343:12",
             "stateMutability": "payable",
             "superFunction": null,
             "visibility": "public"
@@ -1090,48 +1090,48 @@
           {
             "body": null,
             "documentation": "@dev Attempt to buy makerAssetBuyAmount of makerAsset by selling ETH provided with transaction.\n      The Forwarder may *fill* more than makerAssetBuyAmount of the makerAsset so that it can\n      pay takerFees where takerFeeAssetData == makerAssetData (i.e. percentage fees).\n      Any ETH not spent will be refunded to sender.\n @param orders Array of order specifications used containing desired makerAsset and WETH as takerAsset.\n @param makerAssetBuyAmount Desired amount of makerAsset to purchase.\n @param signatures Proofs that orders have been created by makers.\n @param ethFeeAmounts Amounts of ETH, denominated in Wei, that are paid to corresponding feeRecipients.\n @param feeRecipients Addresses that will receive ETH when orders are filled.\n @return wethSpentAmount Amount of WETH spent on the given set of orders.\n @return makerAssetAcquiredAmount Amount of maker asset acquired from the given set of orders.",
-            "id": 3371,
+            "id": 5922,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "marketBuyOrdersWithEth",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 3365,
+              "id": 5916,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3353,
+                  "id": 5904,
                   "name": "orders",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "2934:30:10",
+                  "scope": 5922,
+                  "src": "2934:30:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_array$_t_struct$_Order_$4419_memory_$dyn_memory_ptr",
+                    "typeIdentifier": "t_array$_t_struct$_Order_$6970_memory_$dyn_memory_ptr",
                     "typeString": "struct LibOrder.Order[]"
                   },
                   "typeName": {
                     "baseType": {
                       "contractScope": null,
-                      "id": 3351,
+                      "id": 5902,
                       "name": "LibOrder.Order",
                       "nodeType": "UserDefinedTypeName",
-                      "referencedDeclaration": 4419,
-                      "src": "2934:14:10",
+                      "referencedDeclaration": 6970,
+                      "src": "2934:14:12",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Order_$4419_storage_ptr",
+                        "typeIdentifier": "t_struct$_Order_$6970_storage_ptr",
                         "typeString": "struct LibOrder.Order"
                       }
                     },
-                    "id": 3352,
+                    "id": 5903,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "2934:16:10",
+                    "src": "2934:16:12",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_Order_$4419_storage_$dyn_storage_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_Order_$6970_storage_$dyn_storage_ptr",
                       "typeString": "struct LibOrder.Order[]"
                     }
                   },
@@ -1140,11 +1140,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3355,
+                  "id": 5906,
                   "name": "makerAssetBuyAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "2974:27:10",
+                  "scope": 5922,
+                  "src": "2974:27:12",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1152,10 +1152,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3354,
+                    "id": 5905,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2974:7:10",
+                    "src": "2974:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1166,11 +1166,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3358,
+                  "id": 5909,
                   "name": "signatures",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "3011:25:10",
+                  "scope": 5922,
+                  "src": "3011:25:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1179,19 +1179,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3356,
+                      "id": 5907,
                       "name": "bytes",
                       "nodeType": "ElementaryTypeName",
-                      "src": "3011:5:10",
+                      "src": "3011:5:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_bytes_storage_ptr",
                         "typeString": "bytes"
                       }
                     },
-                    "id": 3357,
+                    "id": 5908,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "3011:7:10",
+                    "src": "3011:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
                       "typeString": "bytes[]"
@@ -1202,11 +1202,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3361,
+                  "id": 5912,
                   "name": "ethFeeAmounts",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "3046:30:10",
+                  "scope": 5922,
+                  "src": "3046:30:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1215,19 +1215,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3359,
+                      "id": 5910,
                       "name": "uint256",
                       "nodeType": "ElementaryTypeName",
-                      "src": "3046:7:10",
+                      "src": "3046:7:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "id": 3360,
+                    "id": 5911,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "3046:9:10",
+                    "src": "3046:9:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -1238,11 +1238,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3364,
+                  "id": 5915,
                   "name": "feeRecipients",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "3086:38:10",
+                  "scope": 5922,
+                  "src": "3086:38:12",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1251,20 +1251,20 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3362,
+                      "id": 5913,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "3086:15:10",
+                      "src": "3086:15:12",
                       "stateMutability": "payable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address_payable",
                         "typeString": "address payable"
                       }
                     },
-                    "id": 3363,
+                    "id": 5914,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "3086:17:10",
+                    "src": "3086:17:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_payable_$dyn_storage_ptr",
                       "typeString": "address payable[]"
@@ -1274,19 +1274,19 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2924:206:10"
+              "src": "2924:206:12"
             },
             "returnParameters": {
-              "id": 3370,
+              "id": 5921,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3367,
+                  "id": 5918,
                   "name": "wethSpentAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "3192:23:10",
+                  "scope": 5922,
+                  "src": "3192:23:12",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1294,10 +1294,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3366,
+                    "id": 5917,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3192:7:10",
+                    "src": "3192:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1308,11 +1308,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 3369,
+                  "id": 5920,
                   "name": "makerAssetAcquiredAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3371,
-                  "src": "3229:32:10",
+                  "scope": 5922,
+                  "src": "3229:32:12",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1320,10 +1320,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3368,
+                    "id": 5919,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3229:7:10",
+                    "src": "3229:7:12",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1333,20 +1333,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3178:93:10"
+              "src": "3178:93:12"
             },
-            "scope": 3372,
-            "src": "2893:379:10",
+            "scope": 5923,
+            "src": "2893:379:12",
             "stateMutability": "payable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 3373,
-        "src": "777:2497:10"
+        "scope": 5924,
+        "src": "777:2497:12"
       }
     ],
-    "src": "580:2695:10"
+    "src": "580:2695:12"
   },
   "compiler": {
     "name": "solc",
@@ -1354,7 +1354,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-02-19T06:30:20.856Z",
+  "updatedAt": "2020-02-27T06:07:50.509Z",
   "devdoc": {
     "methods": {
       "marketBuyOrdersWithEth((address,address,address,address,uint256,uint256,uint256,uint256,uint256,uint256,bytes,bytes,bytes,bytes)[],uint256,bytes[],uint256[],address[])": {
