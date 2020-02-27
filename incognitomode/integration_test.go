@@ -451,8 +451,7 @@ func wait(client *ethclient.Client, tx common.Hash) error {
 
 func connect() (*ecdsa.PrivateKey, *ethclient.Client, error) {
 	// privKeyHex := os.Getenv("PRIVKEY")
-	//privKeyHex := "81c85096bc78372f258c804adff8cc0f16f477cc707c366dda02f4a50dd4fe3e"
-	privKeyHex := "9AA3C3ABF0CD4EF900A7815504DF8DAACB5266F26F46DDD6BAD3099E1BAF94AD"
+	privKeyHex := "81c85096bc78372f258c804adff8cc0f16f477cc707c366dda02f4a50dd4fe3e"
 	privKey, err := crypto.HexToECDSA(privKeyHex)
 	if err != nil {
 		return nil, nil, err
@@ -461,8 +460,8 @@ func connect() (*ecdsa.PrivateKey, *ethclient.Client, error) {
 
 	network := "local"
 	fmt.Printf("Connecting to network %s\n", network)
-	//client, err := ethclient.Dial("http://localhost:8545")
-	client, err := ethclient.Dial("https://rinkeby.infura.io/v3/6bc9014389394a1fb3aa1985f323d3c7")
+	client, err := ethclient.Dial("http://localhost:8545")
+	//client, err := ethclient.Dial("https://rinkeby.infura.io/v3/6bc9014389394a1fb3aa1985f323d3c7")
 	if err != nil {
 		return nil, nil, err
 	}
