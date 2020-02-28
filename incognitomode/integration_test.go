@@ -25,7 +25,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-
 )
 
 type SampleData struct {
@@ -236,6 +235,17 @@ func (suite *IntegrationTestSuite) Test_D_Payback_DAI_To_Get_ETH() {
 	suite.borrowOrPayback("payback", RINKEBY_DAI_ADDRESS, RINKEBY_CDAI_ADDRESS, ETH_ADDRESS, big.NewInt(0).Mul(oneEth, big.NewInt(10)), big.NewInt(0))
 }
 
+func (suite *IntegrationTestSuite) Test_E_Invest_ETH() {
+	suite.invest(ETH_ADDRESS, RINKEBY_CETHER, oneEth)
+}
+
+func (suite *IntegrationTestSuite) Test_F_Redeem_ETH() {
+	auth := getAuth(suite.privKey)
+	balance, err := suite.incMode.BalanceOf(&bind.CallOpts{From: auth.From}, RINKEBY_CETHER)
+	suite.NoError(err)
+	suite.redeem(RINKEBY_CETHER, ETH_ADDRESS, ETH_ADDRESS, balance)
+}
+
 func getAuth(privKey *ecdsa.PrivateKey) *bind.TransactOpts {
 	auth := bind.NewKeyedTransactor(privKey)
 	auth.Value = big.NewInt(0)
@@ -350,12 +360,127 @@ func (suite *IntegrationTestSuite)borrowOrPayback(funcName string, srcToken, des
 	println(balance.String())
 }
 
-func (suite *IntegrationTestSuite) invest() {
-	// TBD.
+func (suite *IntegrationTestSuite) invest(srcToken, srcCToken common.Address, investAmount *big.Int) {
+	var (
+		tx *types.Transaction
+		err error
+		compoundAbi abi.ABI
+		input []byte
+		balance *big.Int
+		amount *big.Int
+	)
+	incModeRaw := incmodemock.IncmodemockRaw{Contract: suite.incMode}
+	compoundAbi, err = abi.JSON(strings.NewReader(compound.CompoundABI))
+	suite.NoError(err)
+
+	if srcToken == ETH_ADDRESS {
+		input, err = compoundAbi.Pack("invest", VERIFIER, srcToken, investAmount)
+	} else {
+		input, err = compoundAbi.Pack("invest", VERIFIER, srcCToken, investAmount)
+	}
+	suite.NoError(err)
+
+	// define tx.data
+	auth := getAuth(suite.privKey)
+
+	// setAmount to stimulate step submitBurntProof
+	tx, err = suite.incMode.SetAmount(auth, VERIFIER, srcToken, investAmount)
+	suite.NoError(err)
+
+	// Wait until tx is confirmed
+	err = wait(suite.client, tx.Hash())
+	suite.NoError(err)
+	println(fmt.Sprintf("Finish executing setAmount at tx:%v", tx.Hash().Hex()))
+
+	// send eth to incognito smart contract to stimulate smc already has eth balance
+	if srcToken == ETH_ADDRESS {
+		println(fmt.Sprintf("depositing %v into %v", investAmount.String(), suite.incAddr.Hex()))
+		auth.Value = investAmount
+		// create tx that sends ether to incognito smart contract
+		tx, err = incModeRaw.Transfer(auth)
+		suite.NoError(err)
+
+		// Wait until tx is confirmed
+		err = wait(suite.client, tx.Hash())
+		suite.NoError(err)
+
+		println(fmt.Sprintf(fmt.Sprintf("finish transfer %v wei to %v at tx %v", auth.Value.String(), suite.vaultAddr.Hex(), tx.Hash().Hex())))
+		// reset auth
+		auth.Value = big.NewInt(0)
+	} else {
+		// TBD.
+		// should we do anything here?
+	}
+	// call execute function
+	// trigger execute function from incognitoMode
+	tx, err = suite.incMode.Execute(auth, srcToken, investAmount, srcCToken, suite.compoundAddr, input, bytes32(HASH), SIG)
+	suite.NoError(err, fmt.Sprintf("execute failed: src=%v srcCToken=%v srcQty=%v", srcToken.Hex(), srcCToken.Hex(), investAmount.String()))
+
+	// Wait until tx is confirmed
+	err = wait(suite.client, tx.Hash())
+	suite.NoError(err)
+
+	println(fmt.Sprintf("Finish executing execute at tx:%v", tx.Hash().Hex()))
+
+	// get investedAmount from field investors in Compound
+	if srcToken == ETH_ADDRESS {
+		amount, err = suite.compound.Investors(&bind.CallOpts{From: auth.From}, VERIFIER, ETH_ADDRESS)
+	} else {
+		amount, err = suite.compound.Investors(&bind.CallOpts{From: auth.From}, VERIFIER, srcCToken)
+	}
+	suite.NoError(err)
+
+	// check balanceOf
+	balance, err = suite.incMode.BalanceOf(&bind.CallOpts{From: auth.From}, srcCToken)
+	suite.NoError(err)
+
+	// compare minted amount in compound with balance of incognito smart contract
+	suite.Equal(amount.Cmp(balance), 0, fmt.Sprintf("balance mismatched: investedAmount=%v receivedAmount=%v", amount.String(), balance.String()))
+
+	// TODO: Note that returned compound balance is different than amount of input token
+	println(fmt.Sprintf("balance of %v is %v", srcCToken.Hex(), balance.String()))
 }
 
-func (suite *IntegrationTestSuite) payback() {
-	// TBD.
+func (suite *IntegrationTestSuite) redeem(srcToken, srcCToken, destToken common.Address, redeemAmount *big.Int) {
+	var (
+		tx *types.Transaction
+		err error
+		compoundAbi abi.ABI
+		input []byte
+		balance *big.Int
+	)
+	compoundAbi, err = abi.JSON(strings.NewReader(compound.CompoundABI))
+	suite.NoError(err)
+
+	input, err = compoundAbi.Pack("redeem", VERIFIER, srcCToken, redeemAmount)
+	suite.NoError(err)
+
+	// define tx.data
+	auth := getAuth(suite.privKey)
+
+	// setAmount to stimulate step submitBurntProof
+	tx, err = suite.incMode.SetAmount(auth, VERIFIER, srcToken, redeemAmount)
+	suite.NoError(err)
+
+	// Wait until tx is confirmed
+	err = wait(suite.client, tx.Hash())
+	suite.NoError(err)
+	println(fmt.Sprintf("Finish executing setAmount at tx:%v", tx.Hash().Hex()))
+
+	// call execute function
+	// trigger execute function from incognitoMode
+	tx, err = suite.incMode.Execute(auth, srcToken, redeemAmount, destToken, suite.compoundAddr, input, bytes32(HASH), SIG)
+	suite.NoError(err, fmt.Sprintf("execute failed: src=%v srcCToken=%v destToken=%v srcQty=%v", srcToken.Hex(), srcCToken.Hex(), destToken.Hex(), redeemAmount.String()))
+
+	// Wait until tx is confirmed
+	err = wait(suite.client, tx.Hash())
+	suite.NoError(err)
+	println(fmt.Sprintf("Finish executing execute at tx:%v", tx.Hash().Hex()))
+
+	// check balance of returned token's amount
+	balance, err = suite.incMode.BalanceOf(&bind.CallOpts{From: auth.From}, destToken)
+	suite.NoError(err)
+	println(fmt.Sprintf("balance of destToken %v is %v", destToken.Hex(), balance.String()))
 }
 
 func (suite *IntegrationTestSuite)trade(_type string, srcName, destName string, srcToken, destToken common.Address, srcQty *big.Int) {
@@ -427,10 +552,6 @@ func bytes32(data []byte) (result [32]byte) {
 	return result
 }
 
-func TestIntegrationTestSuite(t *testing.T) {
-	s.Run(t, new(IntegrationTestSuite))
-}
-
 func wait(client *ethclient.Client, tx common.Hash) error {
 	ctx := context.Background()
 	for range time.Tick(10 * time.Second) {
@@ -449,6 +570,8 @@ func wait(client *ethclient.Client, tx common.Hash) error {
 	return nil
 }
 
+// Run ganache-cli --fork https://rinkeby.infura.io/v3/<your_API_KEY> --account "0x81c85096bc78372f258c804adff8cc0f16f477cc707c366dda02f4a50dd4fe3e,100000000000000000000000"
+// before run the test.
 func connect() (*ecdsa.PrivateKey, *ethclient.Client, error) {
 	// privKeyHex := os.Getenv("PRIVKEY")
 	privKeyHex := "81c85096bc78372f258c804adff8cc0f16f477cc707c366dda02f4a50dd4fe3e"
@@ -467,4 +590,16 @@ func connect() (*ecdsa.PrivateKey, *ethclient.Client, error) {
 	}
 
 	return privKey, client, nil
+}
+
+func TestIntegrationTestSuite(t *testing.T) {
+	// TODO: Trade, BorrowOrPay and invest-redeem should be run separately.
+	//  for unknown reasons, revert will be thrown in some of the tests while running tests end to end.
+	//  research how to solve this problem.
+
+	// TODO: investigate about interest after invest
+
+	// TODO: write compound tests for token to token (ETH) cases.
+
+	s.Run(t, new(IntegrationTestSuite))
 }

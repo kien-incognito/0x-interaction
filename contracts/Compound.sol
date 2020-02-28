@@ -85,9 +85,9 @@ contract Compound is TradeUtils {
 	/**
 	 * @dev mint ethereum into compound smart contract
 	 */
-	function mint() internal {
+	function mint() internal returns (uint) {
 		cEther.mint.value(msg.value)();
-		enterMarket(address(cEther));
+		return cEther.balanceOf(address(this));
 	}
 
 	/**
@@ -95,11 +95,11 @@ contract Compound is TradeUtils {
 	 * @param cToken: cToken address which represents to token in compound.
 	 * @param mintAmount: minted token amount.
 	 */
-	function mint(CErc20 cToken, uint mintAmount) internal {
+	function mint(CErc20 cToken, uint mintAmount) internal returns (uint) {
 		require(balanceOf(ERC20(cToken.underlying())) >= mintAmount);
 		approve(ERC20(cToken.underlying()), address(cToken), mintAmount);
-		enterMarket(address(cToken));
 		require(cToken.mint(mintAmount) == 0);
+		return cToken.balanceOf(address(this));
 	}
 	
 	/**
@@ -114,12 +114,14 @@ contract Compound is TradeUtils {
 	    if (ERC20(collateralToken) == ETH_CONTRACT_ADDRESS) {
 	        // mint eth 
 	        mint();
+	        enterMarket(address(cEther));
 	    } else {
     	    // check balance of collateralToken
     	    require(balanceOf(ERC20(collateralToken)) >= srcAmount);
     	    
     	    // mint token
     	    mint(CErc20(collateralToken), srcAmount);
+    	    enterMarket(collateralToken);
 	    }
 	    // start borrow
 	    borrowInternal(borrowedToken, borrowedAmount);
@@ -203,14 +205,20 @@ contract Compound is TradeUtils {
 	function invest(address investor, address investedToken, uint investedAmount) external payable isIncognitoSmartContract returns (address, uint) {
 	    if (ERC20(investedToken) == ETH_CONTRACT_ADDRESS) {
 	        require(msg.value >= 0);
-	        mint();
-	        investors[investor][investedToken] += msg.value;
-	        return (address(ETH_CONTRACT_ADDRESS), 0);
+	        uint mintedAmount = mint();
+	        investors[investor][investedToken] += mintedAmount;
+	        
+	        // transfer minted token to incognitoSmartContract
+	        require(cEther.transfer(incognitoSmartContract, mintedAmount));
+	        return (address(cEther), mintedAmount);
 	    } 
         require(balanceOf(ERC20(CErc20(investedToken).underlying())) >= investedAmount);
-        mint(CErc20(investedToken), investedAmount);
-        investors[investor][investedToken] += investedAmount;
-        return (CErc20(investedToken).underlying(), 0);
+        uint mintedAmount = mint(CErc20(investedToken), investedAmount);
+        investors[investor][investedToken] += mintedAmount;
+        
+        // transfer minted token to incognitoSmartContract
+        require(CErc20(investedToken).transfer(incognitoSmartContract, mintedAmount));
+        return (investedToken, mintedAmount);
 	}
 	
 	/**

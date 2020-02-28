@@ -12,14 +12,14 @@
     "absolutePath": "@0x/contracts-utils/contracts/src/LibRichErrors.sol",
     "exportedSymbols": {
       "LibRichErrors": [
-        7640
+        7716
       ]
     },
-    "id": 7641,
+    "id": 7717,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 7613,
+        "id": 7689,
         "literals": [
           "solidity",
           "^",
@@ -35,19 +35,19 @@
         "contractKind": "library",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 7640,
+        "id": 7716,
         "linearizedBaseContracts": [
-          7640
+          7716
         ],
         "name": "LibRichErrors",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": true,
-            "id": 7616,
+            "id": 7692,
             "name": "STANDARD_ERROR_SELECTOR",
             "nodeType": "VariableDeclaration",
-            "scope": 7640,
+            "scope": 7716,
             "src": "677:69:20",
             "stateVariable": true,
             "storageLocation": "default",
@@ -56,7 +56,7 @@
               "typeString": "bytes4"
             },
             "typeName": {
-              "id": 7614,
+              "id": 7690,
               "name": "bytes4",
               "nodeType": "ElementaryTypeName",
               "src": "677:6:20",
@@ -68,7 +68,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "30783038633337396130",
-              "id": 7615,
+              "id": 7691,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -87,7 +87,7 @@
           },
           {
             "body": {
-              "id": 7631,
+              "id": 7707,
               "nodeType": "Block",
               "src": "1229:121:20",
               "statements": [
@@ -97,11 +97,11 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 7625,
+                        "id": 7701,
                         "name": "STANDARD_ERROR_SELECTOR",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7616,
+                        "referencedDeclaration": 7692,
                         "src": "1282:23:20",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes4",
@@ -113,11 +113,11 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 7627,
+                            "id": 7703,
                             "name": "message",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 7618,
+                            "referencedDeclaration": 7694,
                             "src": "1325:7:20",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
@@ -132,7 +132,7 @@
                               "typeString": "string memory"
                             }
                           ],
-                          "id": 7626,
+                          "id": 7702,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -145,7 +145,7 @@
                           },
                           "typeName": "bytes"
                         },
-                        "id": 7628,
+                        "id": 7704,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -173,18 +173,18 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 7623,
+                        "id": 7699,
                         "name": "abi",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7885,
+                        "referencedDeclaration": 7961,
                         "src": "1246:3:20",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_abi",
                           "typeString": "abi"
                         }
                       },
-                      "id": 7624,
+                      "id": 7700,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -198,7 +198,7 @@
                         "typeString": "function (bytes4) pure returns (bytes memory)"
                       }
                     },
-                    "id": 7629,
+                    "id": 7705,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -212,30 +212,30 @@
                       "typeString": "bytes memory"
                     }
                   },
-                  "functionReturnParameters": 7622,
-                  "id": 7630,
+                  "functionReturnParameters": 7698,
+                  "id": 7706,
                   "nodeType": "Return",
                   "src": "1239:104:20"
                 }
               ]
             },
             "documentation": "@dev ABI encode a standard, string revert error payload.\n      This is the same payload that would be included by a `revert(string)`\n      solidity statement. It has the function signature `Error(string)`.\n @param message The error string.\n @return The ABI encoded error.",
-            "id": 7632,
+            "id": 7708,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "StandardError",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7619,
+              "id": 7695,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7618,
+                  "id": 7694,
                   "name": "message",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7632,
+                  "scope": 7708,
                   "src": "1136:21:20",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -244,7 +244,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 7617,
+                    "id": 7693,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "1136:6:20",
@@ -260,15 +260,15 @@
               "src": "1126:37:20"
             },
             "returnParameters": {
-              "id": 7622,
+              "id": 7698,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7621,
+                  "id": 7697,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7632,
+                  "scope": 7708,
                   "src": "1211:12:20",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -277,7 +277,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 7620,
+                    "id": 7696,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "1211:5:20",
@@ -292,7 +292,7 @@
               ],
               "src": "1210:14:20"
             },
-            "scope": 7640,
+            "scope": 7716,
             "src": "1104:246:20",
             "stateMutability": "pure",
             "superFunction": null,
@@ -300,7 +300,7 @@
           },
           {
             "body": {
-              "id": 7638,
+              "id": 7714,
               "nodeType": "Block",
               "src": "1586:95:20",
               "statements": [
@@ -308,7 +308,7 @@
                   "externalReferences": [
                     {
                       "errorData": {
-                        "declaration": 7634,
+                        "declaration": 7710,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "1654:9:20",
@@ -317,7 +317,7 @@
                     },
                     {
                       "errorData": {
-                        "declaration": 7634,
+                        "declaration": 7710,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "1630:9:20",
@@ -325,7 +325,7 @@
                       }
                     }
                   ],
-                  "id": 7637,
+                  "id": 7713,
                   "nodeType": "InlineAssembly",
                   "operations": "{\n    revert(add(errorData, 0x20), mload(errorData))\n}",
                   "src": "1596:79:20"
@@ -333,22 +333,22 @@
               ]
             },
             "documentation": "@dev Reverts an encoded rich revert reason `errorData`.\n @param errorData ABI encoded error data.",
-            "id": 7639,
+            "id": 7715,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "rrevert",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7635,
+              "id": 7711,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7634,
+                  "id": 7710,
                   "name": "errorData",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7639,
+                  "scope": 7715,
                   "src": "1528:22:20",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -357,7 +357,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 7633,
+                    "id": 7709,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "1528:5:20",
@@ -373,19 +373,19 @@
               "src": "1527:24:20"
             },
             "returnParameters": {
-              "id": 7636,
+              "id": 7712,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1586:0:20"
             },
-            "scope": 7640,
+            "scope": 7716,
             "src": "1511:170:20",
             "stateMutability": "pure",
             "superFunction": null,
             "visibility": "internal"
           }
         ],
-        "scope": 7641,
+        "scope": 7717,
         "src": "606:1077:20"
       }
     ],
@@ -395,14 +395,14 @@
     "absolutePath": "@0x/contracts-utils/contracts/src/LibRichErrors.sol",
     "exportedSymbols": {
       "LibRichErrors": [
-        7640
+        7716
       ]
     },
-    "id": 7641,
+    "id": 7717,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 7613,
+        "id": 7689,
         "literals": [
           "solidity",
           "^",
@@ -418,19 +418,19 @@
         "contractKind": "library",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 7640,
+        "id": 7716,
         "linearizedBaseContracts": [
-          7640
+          7716
         ],
         "name": "LibRichErrors",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": true,
-            "id": 7616,
+            "id": 7692,
             "name": "STANDARD_ERROR_SELECTOR",
             "nodeType": "VariableDeclaration",
-            "scope": 7640,
+            "scope": 7716,
             "src": "677:69:20",
             "stateVariable": true,
             "storageLocation": "default",
@@ -439,7 +439,7 @@
               "typeString": "bytes4"
             },
             "typeName": {
-              "id": 7614,
+              "id": 7690,
               "name": "bytes4",
               "nodeType": "ElementaryTypeName",
               "src": "677:6:20",
@@ -451,7 +451,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "30783038633337396130",
-              "id": 7615,
+              "id": 7691,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -470,7 +470,7 @@
           },
           {
             "body": {
-              "id": 7631,
+              "id": 7707,
               "nodeType": "Block",
               "src": "1229:121:20",
               "statements": [
@@ -480,11 +480,11 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 7625,
+                        "id": 7701,
                         "name": "STANDARD_ERROR_SELECTOR",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7616,
+                        "referencedDeclaration": 7692,
                         "src": "1282:23:20",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes4",
@@ -496,11 +496,11 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 7627,
+                            "id": 7703,
                             "name": "message",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 7618,
+                            "referencedDeclaration": 7694,
                             "src": "1325:7:20",
                             "typeDescriptions": {
                               "typeIdentifier": "t_string_memory_ptr",
@@ -515,7 +515,7 @@
                               "typeString": "string memory"
                             }
                           ],
-                          "id": 7626,
+                          "id": 7702,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -528,7 +528,7 @@
                           },
                           "typeName": "bytes"
                         },
-                        "id": 7628,
+                        "id": 7704,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -556,18 +556,18 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 7623,
+                        "id": 7699,
                         "name": "abi",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 7885,
+                        "referencedDeclaration": 7961,
                         "src": "1246:3:20",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_abi",
                           "typeString": "abi"
                         }
                       },
-                      "id": 7624,
+                      "id": 7700,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -581,7 +581,7 @@
                         "typeString": "function (bytes4) pure returns (bytes memory)"
                       }
                     },
-                    "id": 7629,
+                    "id": 7705,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -595,30 +595,30 @@
                       "typeString": "bytes memory"
                     }
                   },
-                  "functionReturnParameters": 7622,
-                  "id": 7630,
+                  "functionReturnParameters": 7698,
+                  "id": 7706,
                   "nodeType": "Return",
                   "src": "1239:104:20"
                 }
               ]
             },
             "documentation": "@dev ABI encode a standard, string revert error payload.\n      This is the same payload that would be included by a `revert(string)`\n      solidity statement. It has the function signature `Error(string)`.\n @param message The error string.\n @return The ABI encoded error.",
-            "id": 7632,
+            "id": 7708,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "StandardError",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7619,
+              "id": 7695,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7618,
+                  "id": 7694,
                   "name": "message",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7632,
+                  "scope": 7708,
                   "src": "1136:21:20",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -627,7 +627,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 7617,
+                    "id": 7693,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "1136:6:20",
@@ -643,15 +643,15 @@
               "src": "1126:37:20"
             },
             "returnParameters": {
-              "id": 7622,
+              "id": 7698,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7621,
+                  "id": 7697,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7632,
+                  "scope": 7708,
                   "src": "1211:12:20",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -660,7 +660,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 7620,
+                    "id": 7696,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "1211:5:20",
@@ -675,7 +675,7 @@
               ],
               "src": "1210:14:20"
             },
-            "scope": 7640,
+            "scope": 7716,
             "src": "1104:246:20",
             "stateMutability": "pure",
             "superFunction": null,
@@ -683,7 +683,7 @@
           },
           {
             "body": {
-              "id": 7638,
+              "id": 7714,
               "nodeType": "Block",
               "src": "1586:95:20",
               "statements": [
@@ -691,7 +691,7 @@
                   "externalReferences": [
                     {
                       "errorData": {
-                        "declaration": 7634,
+                        "declaration": 7710,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "1654:9:20",
@@ -700,7 +700,7 @@
                     },
                     {
                       "errorData": {
-                        "declaration": 7634,
+                        "declaration": 7710,
                         "isOffset": false,
                         "isSlot": false,
                         "src": "1630:9:20",
@@ -708,7 +708,7 @@
                       }
                     }
                   ],
-                  "id": 7637,
+                  "id": 7713,
                   "nodeType": "InlineAssembly",
                   "operations": "{\n    revert(add(errorData, 0x20), mload(errorData))\n}",
                   "src": "1596:79:20"
@@ -716,22 +716,22 @@
               ]
             },
             "documentation": "@dev Reverts an encoded rich revert reason `errorData`.\n @param errorData ABI encoded error data.",
-            "id": 7639,
+            "id": 7715,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "rrevert",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7635,
+              "id": 7711,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7634,
+                  "id": 7710,
                   "name": "errorData",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7639,
+                  "scope": 7715,
                   "src": "1528:22:20",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -740,7 +740,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 7633,
+                    "id": 7709,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "1528:5:20",
@@ -756,19 +756,19 @@
               "src": "1527:24:20"
             },
             "returnParameters": {
-              "id": 7636,
+              "id": 7712,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1586:0:20"
             },
-            "scope": 7640,
+            "scope": 7716,
             "src": "1511:170:20",
             "stateMutability": "pure",
             "superFunction": null,
             "visibility": "internal"
           }
         ],
-        "scope": 7641,
+        "scope": 7717,
         "src": "606:1077:20"
       }
     ],
@@ -780,7 +780,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-02-27T06:07:50.543Z",
+  "updatedAt": "2020-02-28T07:02:21.031Z",
   "devdoc": {
     "methods": {}
   },

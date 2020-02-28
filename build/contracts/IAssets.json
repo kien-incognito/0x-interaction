@@ -48,14 +48,14 @@
     "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IAssets.sol",
     "exportedSymbols": {
       "IAssets": [
-        5867
+        5943
       ]
     },
-    "id": 5868,
+    "id": 5944,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 5854,
+        "id": 5930,
         "literals": [
           "solidity",
           "^",
@@ -71,9 +71,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 5867,
+        "id": 5943,
         "linearizedBaseContracts": [
-          5867
+          5943
         ],
         "name": "IAssets",
         "nodeType": "ContractDefinition",
@@ -81,22 +81,22 @@
           {
             "body": null,
             "documentation": "@dev Withdraws assets from this contract. The contract requires a ZRX balance in order to\n      function optimally, and this function allows the ZRX to be withdrawn by owner. It may also be\n      used to withdraw assets that were accidentally sent to this contract.\n @param assetData Byte array encoded for the respective asset proxy.\n @param amount Amount of ERC20 token to withdraw.",
-            "id": 5861,
+            "id": 5937,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "withdrawAsset",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 5859,
+              "id": 5935,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5856,
+                  "id": 5932,
                   "name": "assetData",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5861,
+                  "scope": 5937,
                   "src": "1083:24:10",
                   "stateVariable": false,
                   "storageLocation": "calldata",
@@ -105,7 +105,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 5855,
+                    "id": 5931,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "1083:5:10",
@@ -119,10 +119,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 5858,
+                  "id": 5934,
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5861,
+                  "scope": 5937,
                   "src": "1117:14:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -131,7 +131,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 5857,
+                    "id": 5933,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "1117:7:10",
@@ -147,12 +147,12 @@
               "src": "1073:64:10"
             },
             "returnParameters": {
-              "id": 5860,
+              "id": 5936,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1154:0:10"
             },
-            "scope": 5867,
+            "scope": 5943,
             "src": "1051:104:10",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -161,22 +161,22 @@
           {
             "body": null,
             "documentation": "@dev Approves the respective proxy for a given asset to transfer tokens on the Forwarder contract's behalf.\n      This is necessary because an order fee denominated in the maker asset (i.e. a percentage fee) is sent by the\n      Forwarder contract to the fee recipient.\n      This method needs to be called before forwarding orders of a maker asset that hasn't\n      previously been approved.\n @param assetData Byte array encoded for the respective asset proxy.",
-            "id": 5866,
+            "id": 5942,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "approveMakerAssetProxy",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 5864,
+              "id": 5940,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5863,
+                  "id": 5939,
                   "name": "assetData",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5866,
+                  "scope": 5942,
                   "src": "1731:24:10",
                   "stateVariable": false,
                   "storageLocation": "calldata",
@@ -185,7 +185,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 5862,
+                    "id": 5938,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "1731:5:10",
@@ -201,19 +201,19 @@
               "src": "1721:40:10"
             },
             "returnParameters": {
-              "id": 5865,
+              "id": 5941,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1778:0:10"
             },
-            "scope": 5867,
+            "scope": 5943,
             "src": "1690:89:10",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 5868,
+        "scope": 5944,
         "src": "606:1175:10"
       }
     ],
@@ -223,14 +223,14 @@
     "absolutePath": "@0x/contracts-exchange-forwarder/contracts/src/interfaces/IAssets.sol",
     "exportedSymbols": {
       "IAssets": [
-        5867
+        5943
       ]
     },
-    "id": 5868,
+    "id": 5944,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 5854,
+        "id": 5930,
         "literals": [
           "solidity",
           "^",
@@ -246,9 +246,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 5867,
+        "id": 5943,
         "linearizedBaseContracts": [
-          5867
+          5943
         ],
         "name": "IAssets",
         "nodeType": "ContractDefinition",
@@ -256,22 +256,22 @@
           {
             "body": null,
             "documentation": "@dev Withdraws assets from this contract. The contract requires a ZRX balance in order to\n      function optimally, and this function allows the ZRX to be withdrawn by owner. It may also be\n      used to withdraw assets that were accidentally sent to this contract.\n @param assetData Byte array encoded for the respective asset proxy.\n @param amount Amount of ERC20 token to withdraw.",
-            "id": 5861,
+            "id": 5937,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "withdrawAsset",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 5859,
+              "id": 5935,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5856,
+                  "id": 5932,
                   "name": "assetData",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5861,
+                  "scope": 5937,
                   "src": "1083:24:10",
                   "stateVariable": false,
                   "storageLocation": "calldata",
@@ -280,7 +280,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 5855,
+                    "id": 5931,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "1083:5:10",
@@ -294,10 +294,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 5858,
+                  "id": 5934,
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5861,
+                  "scope": 5937,
                   "src": "1117:14:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -306,7 +306,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 5857,
+                    "id": 5933,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "1117:7:10",
@@ -322,12 +322,12 @@
               "src": "1073:64:10"
             },
             "returnParameters": {
-              "id": 5860,
+              "id": 5936,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1154:0:10"
             },
-            "scope": 5867,
+            "scope": 5943,
             "src": "1051:104:10",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -336,22 +336,22 @@
           {
             "body": null,
             "documentation": "@dev Approves the respective proxy for a given asset to transfer tokens on the Forwarder contract's behalf.\n      This is necessary because an order fee denominated in the maker asset (i.e. a percentage fee) is sent by the\n      Forwarder contract to the fee recipient.\n      This method needs to be called before forwarding orders of a maker asset that hasn't\n      previously been approved.\n @param assetData Byte array encoded for the respective asset proxy.",
-            "id": 5866,
+            "id": 5942,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "approveMakerAssetProxy",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 5864,
+              "id": 5940,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5863,
+                  "id": 5939,
                   "name": "assetData",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5866,
+                  "scope": 5942,
                   "src": "1731:24:10",
                   "stateVariable": false,
                   "storageLocation": "calldata",
@@ -360,7 +360,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 5862,
+                    "id": 5938,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "1731:5:10",
@@ -376,19 +376,19 @@
               "src": "1721:40:10"
             },
             "returnParameters": {
-              "id": 5865,
+              "id": 5941,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1778:0:10"
             },
-            "scope": 5867,
+            "scope": 5943,
             "src": "1690:89:10",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 5868,
+        "scope": 5944,
         "src": "606:1175:10"
       }
     ],
@@ -400,7 +400,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-02-27T06:07:50.506Z",
+  "updatedAt": "2020-02-28T07:02:20.997Z",
   "devdoc": {
     "methods": {
       "approveMakerAssetProxy(bytes)": {
